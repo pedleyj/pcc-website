@@ -12,6 +12,8 @@ import {
 } from '@heroicons/react/24/outline'
 import { getSiteSettings, getLatestMessages, getUpcomingEvents } from '@/lib/db/queries'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Gatherings | Peninsula Covenant Church',
   description: 'Join us for Sunday services, watch recent messages, and see upcoming events at PCC.',

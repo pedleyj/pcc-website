@@ -11,6 +11,8 @@ import {
 } from '@heroicons/react/24/outline'
 import { getSiteSettings } from '@/lib/db/queries'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Give | Peninsula Covenant Church',
   description: 'Support the mission of PCC through generous giving. Give online, by check, or through stock donations.',

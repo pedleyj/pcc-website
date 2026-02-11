@@ -15,6 +15,8 @@ import {
 } from '@heroicons/react/24/outline'
 import { getCurrentAlphaSession } from '@/lib/db/queries'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Alpha | Peninsula Covenant Church',
   description: 'Explore life, faith, and meaning through Alpha at PCC. Free dinner, great conversation, no pressure.',

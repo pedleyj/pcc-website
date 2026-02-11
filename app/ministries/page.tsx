@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { getActiveMinistries } from '@/lib/db/queries'
 import { MinistryGrid } from '@/components/ministries/ministry-grid'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Ministries | Peninsula Covenant Church',
   description: 'Find your place in community at PCC. Explore our ministries for kids, youth, adults, worship, and outreach.',

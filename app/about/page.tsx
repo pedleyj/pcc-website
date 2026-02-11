@@ -9,6 +9,8 @@ import {
 } from '@heroicons/react/24/outline'
 import { getSiteSettings, getLeadershipTeam, getAllStaff } from '@/lib/db/queries'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'About | Peninsula Covenant Church',
   description: 'Learn about PCC — our mission, story, beliefs, and the team that serves our community in Redwood City, CA.',

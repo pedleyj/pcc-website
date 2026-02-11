@@ -11,6 +11,8 @@ import {
 } from '@heroicons/react/24/outline'
 import { getSiteSettings } from '@/lib/db/queries'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "I'm New | Peninsula Covenant Church",
   description: 'Plan your first visit to PCC. Discover what to expect on Sunday, service times, directions, and how to get connected.',

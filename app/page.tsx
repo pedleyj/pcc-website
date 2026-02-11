@@ -5,6 +5,8 @@ import { CalendarDaysIcon, ClockIcon, MapPinIcon, UserGroupIcon, PlayCircleIcon,
 import { HeroCarousel } from '@/components/home/hero-carousel'
 import { getSiteSettings, getLatestMessages, getUpcomingEvents, getCurrentAlphaSession, getActiveMinistries } from '@/lib/db/queries'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Home() {
   const [siteSettings, messages, events, alphaSession, ministries] = await Promise.all([
     getSiteSettings(),
