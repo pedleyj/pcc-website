@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AlphaSession {
+  id                String   @id @default(cuid())
+  season            String
+  startDate         DateTime
+  endDate           DateTime
+  meetingDay        String
+  meetingTime       String
+  location          String
+  description       String   @db.Text
+  registrationOpen  Boolean  @default(true)
+  registrationUrl   String
+  maxCapacity       Int?
+  currentCount      Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([startDate])
+  @@index([registrationOpen])
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  title       String
+  speaker     String
+  date        DateTime
+  series      String?
+  scripture   String?
+  description String?  @db.Text
+  videoUrl    String?
+  audioUrl    String?
+  thumbnail   String?
+  tags        String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([date])
+  @@index([series])
+  @@index([speaker])
+}
+
+model Event {
+  id                String   @id @default(cuid())
+  title             String
+  description       String   @db.Text
+  startDate         DateTime
+  endDate           DateTime?
+  location          String?
+  imageUrl          String?
+  registrationUrl   String?
+  registrationOpen  Boolean  @default(false)
+  category          String
+  featured          Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([startDate])
+  @@index([category])
+  @@index([featured])
+}
+
+model Ministry {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  description String   @db.Text
+  leader      String?
+  leaderEmail String?
+  meetingInfo String?  @db.Text
+  imageUrl    String?
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([active])
+  @@index([order])
+}
+
+model StaffMember {
+  id         String   @id @default(cuid())
+  name       String
+  role       String
+  email      String?
+  phone      String?
+  bio        String?  @db.Text
+  photoUrl   String?
+  order      Int      @default(0)
+  leadership Boolean  @default(false)
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([order])
+  @@index([leadership])
+  @@index([active])
+}
+
+model SiteSettings {
+  id            String   @id @default(cuid())
+  serviceTimes  String   @db.Text
+  address       String
+  phone         String
+  email         String
+  liveStreamUrl String?
+  donationUrl   String?
+  facebookUrl   String?
+  instagramUrl  String?
+  youtubeUrl    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
