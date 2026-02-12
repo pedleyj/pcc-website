@@ -64,7 +64,7 @@ export default async function MinistriesPage() {
                 great conversation.
               </p>
               <Link
-                href="/alpha"
+                href="/explore-faith/alpha"
                 className="mt-4 inline-block text-sm font-semibold text-pcc-emerald hover:text-pcc-emerald-dark transition-colors"
               >
                 Learn more about Alpha →

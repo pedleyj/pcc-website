@@ -198,7 +198,7 @@ export default async function NewVisitorPage() {
                 Explore faith at your own pace with good food and great conversation.
               </p>
               <Link
-                href="/alpha"
+                href="/explore-faith/alpha"
                 className="mt-3 inline-block text-sm font-semibold text-pcc-emerald hover:text-pcc-emerald-dark transition-colors"
               >
                 Learn about Alpha →

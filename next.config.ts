@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      {
+        source: '/alpha',
+        destination: '/explore-faith/alpha',
+        permanent: true,
+      },
+    ]
+  },
   images: {
     remotePatterns: [
       {

@@ -6,6 +6,13 @@ import {
   ClockIcon,
   EnvelopeIcon,
   PhoneIcon,
+  HeartIcon,
+  BookOpenIcon,
+  UserGroupIcon,
+  UsersIcon,
+  BuildingLibraryIcon,
+  CalendarDaysIcon,
+  NewspaperIcon,
 } from '@heroicons/react/24/outline'
 import { getSiteSettings, getLeadershipTeam, getAllStaff } from '@/lib/db/queries'
 
@@ -47,7 +54,7 @@ export default async function AboutPage() {
       </section>
 
       {/* Our Mission */}
-      <section className="bg-white">
+      <section id="mission" className="scroll-mt-20 bg-white">
         <div className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
           <h2 className="text-center text-3xl font-bold text-pcc-navy sm:text-4xl">Our Mission</h2>
           <p className="mx-auto mt-8 max-w-3xl text-center text-2xl font-semibold leading-relaxed text-pcc-teal">
@@ -63,7 +70,7 @@ export default async function AboutPage() {
       </section>
 
       {/* Our Story */}
-      <section className="bg-pcc-cream-light">
+      <section id="story" className="scroll-mt-20 bg-pcc-cream-light">
         <div className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
           <h2 className="text-center text-3xl font-bold text-pcc-navy sm:text-4xl">Our Story</h2>
           <div className="mx-auto mt-8 max-w-3xl space-y-6 text-lg leading-relaxed text-pcc-charcoal">
@@ -86,8 +93,86 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* What We Believe */}
+      {/* Learn More Hub */}
       <section className="bg-white">
+        <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
+          <h2 className="text-center text-3xl font-bold text-pcc-navy sm:text-4xl">
+            Learn More
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-center text-lg text-pcc-slate">
+            Explore everything about our church community
+          </p>
+          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                title: 'Our Mission & Story',
+                description: 'Discover who we are, where we came from, and the mission that drives everything we do.',
+                href: '#mission',
+                icon: HeartIcon,
+              },
+              {
+                title: 'What We Believe',
+                description: 'The core beliefs and values that guide our church community and shape our faith.',
+                href: '/about/beliefs',
+                icon: BookOpenIcon,
+              },
+              {
+                title: 'Our Pastor & Leadership',
+                description: 'Meet the pastoral team and leaders who shepherd and serve our congregation.',
+                href: '/about/leadership',
+                icon: UserGroupIcon,
+              },
+              {
+                title: 'Staff Directory',
+                description: 'Get to know the dedicated staff members who serve our church family every day.',
+                href: '/about/staff',
+                icon: UsersIcon,
+              },
+              {
+                title: 'Community Programs',
+                description: 'Preschool, community center, and other programs serving families throughout the peninsula.',
+                href: '/about/community',
+                icon: BuildingLibraryIcon,
+              },
+              {
+                title: 'Events Calendar',
+                description: 'Stay up to date with worship services, special events, and community gatherings.',
+                href: '/events',
+                icon: CalendarDaysIcon,
+              },
+              {
+                title: 'Newsletter',
+                description: 'Subscribe to our newsletter for weekly updates, stories, and encouragement.',
+                href: '/about/newsletter',
+                icon: NewspaperIcon,
+              },
+            ].map((card) => (
+              <Link
+                key={card.href}
+                href={card.href}
+                className="group rounded-xl bg-pcc-cream-light p-8 shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+              >
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pcc-navy/10 text-pcc-navy">
+                  <card.icon className="h-7 w-7" aria-hidden="true" />
+                </div>
+                <h3 className="mt-5 text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                  {card.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-pcc-slate">
+                  {card.description}
+                </p>
+                <span className="mt-4 inline-flex items-center text-sm font-semibold text-pcc-teal group-hover:gap-2 transition-all">
+                  {card.href.startsWith('#') ? 'Read Below' : 'Learn More'}
+                  <span aria-hidden="true" className="ml-1">&rarr;</span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* What We Believe */}
+      <section id="beliefs" className="scroll-mt-20 bg-pcc-cream-light">
         <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
           <h2 className="text-center text-3xl font-bold text-pcc-navy sm:text-4xl">
             What We Believe
