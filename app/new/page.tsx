@@ -193,15 +193,15 @@ export default async function NewVisitorPage() {
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-pcc-emerald/20 text-3xl font-bold text-pcc-emerald">
                 2
               </div>
-              <h3 className="mt-4 text-xl font-bold text-pcc-navy">Join Alpha</h3>
+              <h3 className="mt-4 text-xl font-bold text-pcc-navy">Explore Faith</h3>
               <p className="mt-2 text-pcc-slate">
-                Explore faith at your own pace with good food and great conversation.
+                Exploring Christianity? Skeptical? Returning after time away? We offer safe spaces to discuss life&apos;s big questions.
               </p>
               <Link
-                href="/explore-faith/alpha"
+                href="/explore-faith"
                 className="mt-3 inline-block text-sm font-semibold text-pcc-emerald hover:text-pcc-emerald-dark transition-colors"
               >
-                Learn about Alpha →
+                Explore Faith →
               </Link>
             </div>
             <div className="rounded-xl border border-pcc-cream-dark p-8 text-center transition-all hover:shadow-lg">
