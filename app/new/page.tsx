@@ -213,7 +213,7 @@ export default async function NewVisitorPage() {
                 Find community in a small group where you can grow and belong.
               </p>
               <Link
-                href="/ministries"
+                href="/connect/ministries"
                 className="mt-3 inline-block text-sm font-semibold text-pcc-teal hover:text-pcc-teal-dark transition-colors"
               >
                 Browse ministries →

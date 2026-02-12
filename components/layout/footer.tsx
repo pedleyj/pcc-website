@@ -23,7 +23,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-pcc-cream">
               <li><Link href="/new" className="hover:text-pcc-teal transition-colors">I'm New</Link></li>
               <li><Link href="/explore-faith/alpha" className="hover:text-pcc-teal transition-colors">Alpha</Link></li>
-              <li><Link href="/ministries" className="hover:text-pcc-teal transition-colors">Ministries</Link></li>
+              <li><Link href="/connect/ministries" className="hover:text-pcc-teal transition-colors">Ministries</Link></li>
               <li><Link href="/give" className="hover:text-pcc-teal transition-colors">Give</Link></li>
             </ul>
           </div>

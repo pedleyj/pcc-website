@@ -416,7 +416,7 @@ export default async function Home() {
 
             <div className="mt-12 text-center">
               <Link
-                href="/ministries"
+                href="/connect/ministries"
                 className="inline-block rounded-lg bg-pcc-teal px-8 py-3 text-lg font-semibold text-white hover:bg-pcc-teal-light transition-colors"
               >
                 Explore All Ministries

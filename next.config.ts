@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         destination: '/explore-faith/alpha',
         permanent: true,
       },
+      {
+        source: '/ministries',
+        destination: '/connect/ministries',
+        permanent: true,
+      },
     ]
   },
   images: {

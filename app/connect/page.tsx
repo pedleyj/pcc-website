@@ -26,7 +26,7 @@ const cards = [
     title: 'Ministries',
     description:
       'From kids to seniors, we have vibrant ministries for every age and stage of life.',
-    href: '/ministries',
+    href: '/connect/ministries',
     icon: HeartIcon,
     external: false,
   },
