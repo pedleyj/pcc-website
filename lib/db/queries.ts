@@ -54,3 +54,62 @@ export async function getAllStaff() {
     orderBy: { order: 'asc' },
   })
 }
+
+export async function getStaffByDepartment(department: string) {
+  return prisma.staffMember.findMany({
+    where: { active: true, department },
+    orderBy: { order: 'asc' },
+  })
+}
+
+export async function getStaffMemberById(id: string) {
+  return prisma.staffMember.findUnique({
+    where: { id },
+  })
+}
+
+// Small Groups
+export async function getAllSmallGroups() {
+  return prisma.smallGroup.findMany({
+    where: { active: true },
+    orderBy: { type: 'asc' },
+  })
+}
+
+export async function getSmallGroupsByType(type: 'growth' | 'life') {
+  return prisma.smallGroup.findMany({
+    where: { active: true, type },
+  })
+}
+
+export async function getOpenSmallGroups() {
+  return prisma.smallGroup.findMany({
+    where: { active: true, openForSignup: true },
+  })
+}
+
+// Support Resources
+export async function getAllSupportResources() {
+  return prisma.supportResource.findMany({
+    where: { active: true },
+    orderBy: { order: 'asc' },
+  })
+}
+
+export async function getSupportResourcesByCategory(category: string) {
+  return prisma.supportResource.findMany({
+    where: { active: true, category },
+    orderBy: { order: 'asc' },
+  })
+}
+
+// Prayer Requests
+export async function createPrayerRequest(data: {
+  name: string
+  email?: string
+  phone?: string
+  request: string
+  isPublic?: boolean
+}) {
+  return prisma.prayerRequest.create({ data })
+}
