@@ -21,9 +21,12 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2 text-sm text-pcc-cream">
-              <li><Link href="/new" className="hover:text-pcc-teal transition-colors">I'm New</Link></li>
-              <li><Link href="/explore-faith/alpha" className="hover:text-pcc-teal transition-colors">Alpha</Link></li>
-              <li><Link href="/connect/ministries" className="hover:text-pcc-teal transition-colors">Ministries</Link></li>
+              <li><Link href="/new" className="hover:text-pcc-teal transition-colors">I&apos;m New</Link></li>
+              <li><Link href="/gatherings" className="hover:text-pcc-teal transition-colors">Gatherings</Link></li>
+              <li><Link href="/explore-faith" className="hover:text-pcc-teal transition-colors">Explore Faith</Link></li>
+              <li><Link href="/connect" className="hover:text-pcc-teal transition-colors">Connect</Link></li>
+              <li><Link href="/support" className="hover:text-pcc-teal transition-colors">Support</Link></li>
+              <li><Link href="/about" className="hover:text-pcc-teal transition-colors">About</Link></li>
               <li><Link href="/give" className="hover:text-pcc-teal transition-colors">Give</Link></li>
             </ul>
           </div>
