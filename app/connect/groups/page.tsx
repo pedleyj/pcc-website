@@ -114,7 +114,7 @@ export default async function GroupsPage() {
             <h2 className="text-2xl font-bold text-pcc-navy">Growth Groups</h2>
             <p className="mt-2 text-pcc-slate">Short-term studies to help you grow</p>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {growthGroups.map((group) => (
+              {growthGroups.map((group: SmallGroup) => (
                 <GroupCard key={group.id} group={group} />
               ))}
             </div>
@@ -129,7 +129,7 @@ export default async function GroupsPage() {
             <h2 className="text-2xl font-bold text-pcc-navy">Life Groups</h2>
             <p className="mt-2 text-pcc-slate">Ongoing community for every season of life</p>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {lifeGroups.map((group) => (
+              {lifeGroups.map((group: SmallGroup) => (
                 <GroupCard key={group.id} group={group} />
               ))}
             </div>
