@@ -193,15 +193,18 @@ export default async function NewVisitorPage() {
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-pcc-emerald/20 text-3xl font-bold text-pcc-emerald">
                 2
               </div>
-              <h3 className="mt-4 text-xl font-bold text-pcc-navy">Explore Faith</h3>
+              <h3 className="mt-4 text-xl font-bold text-pcc-navy">New to Faith or Have Questions?</h3>
               <p className="mt-2 text-pcc-slate">
-                Exploring Christianity? Skeptical? Returning after time away? We offer safe spaces to discuss life&apos;s big questions.
+                Exploring Christianity? Skeptical? Returning after time away? Whether you&apos;re curious, doubtful, or seeking answers, we offer a welcoming space to discuss life&apos;s big questions over dinner. No pressure, no judgment — just honest conversation.
+              </p>
+              <p className="mt-2 text-sm text-pcc-slate">
+                Our Alpha program provides a safe, conversational environment to explore faith at your own pace.
               </p>
               <Link
-                href="/explore-faith"
-                className="mt-3 inline-block text-sm font-semibold text-pcc-emerald hover:text-pcc-emerald-dark transition-colors"
+                href="/explore-faith/alpha"
+                className="mt-4 inline-block rounded-lg bg-pcc-emerald px-6 py-3 text-sm font-semibold text-white hover:bg-pcc-emerald/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
               >
-                Explore Faith →
+                Find Out More
               </Link>
             </div>
             <div className="rounded-xl border border-pcc-cream-dark p-8 text-center transition-all hover:shadow-lg">

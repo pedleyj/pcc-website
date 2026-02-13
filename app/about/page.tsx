@@ -9,12 +9,11 @@ import {
   HeartIcon,
   BookOpenIcon,
   UserGroupIcon,
-  UsersIcon,
   BuildingLibraryIcon,
   CalendarDaysIcon,
   NewspaperIcon,
 } from '@heroicons/react/24/outline'
-import { getSiteSettings, getLeadershipTeam, getAllStaff } from '@/lib/db/queries'
+import { getSiteSettings } from '@/lib/db/queries'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,11 +23,7 @@ export const metadata: Metadata = {
 }
 
 export default async function AboutPage() {
-  const [siteSettings, leadership, staff] = await Promise.all([
-    getSiteSettings(),
-    getLeadershipTeam(),
-    getAllStaff(),
-  ])
+  const siteSettings = await getSiteSettings()
 
   const serviceTimes = siteSettings
     ? (JSON.parse(siteSettings.serviceTimes) as { day: string; times: string[] }[])
@@ -103,70 +98,145 @@ export default async function AboutPage() {
             Explore everything about our church community
           </p>
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                title: 'Our Mission & Story',
-                description: 'Discover who we are, where we came from, and the mission that drives everything we do.',
-                href: '#mission',
-                icon: HeartIcon,
-              },
-              {
-                title: 'What We Believe',
-                description: 'The core beliefs and values that guide our church community and shape our faith.',
-                href: '/about/beliefs',
-                icon: BookOpenIcon,
-              },
-              {
-                title: 'Our Pastor & Leadership',
-                description: 'Meet the pastoral team and leaders who shepherd and serve our congregation.',
-                href: '/about/leadership',
-                icon: UserGroupIcon,
-              },
-              {
-                title: 'Staff Directory',
-                description: 'Get to know the dedicated staff members who serve our church family every day.',
-                href: '/about/staff',
-                icon: UsersIcon,
-              },
-              {
-                title: 'Community Programs',
-                description: 'Preschool, community center, and other programs serving families throughout the peninsula.',
-                href: '/about/community',
-                icon: BuildingLibraryIcon,
-              },
-              {
-                title: 'Events Calendar',
-                description: 'Stay up to date with worship services, special events, and community gatherings.',
-                href: '/events',
-                icon: CalendarDaysIcon,
-              },
-              {
-                title: 'Newsletter',
-                description: 'Subscribe to our newsletter for weekly updates, stories, and encouragement.',
-                href: '/about/newsletter',
-                icon: NewspaperIcon,
-              },
-            ].map((card) => (
-              <Link
-                key={card.href}
-                href={card.href}
-                className="group rounded-xl bg-pcc-cream-light p-8 shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
-              >
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pcc-navy/10 text-pcc-navy">
-                  <card.icon className="h-7 w-7" aria-hidden="true" />
-                </div>
-                <h3 className="mt-5 text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
-                  {card.title}
+            {/* Our Mission & Story */}
+            <Link
+              href="#mission"
+              className="group flex h-full flex-col rounded-xl bg-pcc-cream-light p-8 shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pcc-navy/10 text-pcc-navy">
+                <HeartIcon className="h-7 w-7" aria-hidden="true" />
+              </div>
+              <h3 className="mt-5 text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                Our Mission &amp; Story
+              </h3>
+              <p className="mt-2 flex-grow text-sm leading-relaxed text-pcc-slate">
+                Discover who we are, where we came from, and the mission that drives everything we do.
+              </p>
+              <span className="mt-4 inline-flex items-center text-sm font-semibold text-pcc-teal">
+                Read Below <span aria-hidden="true" className="ml-1">&rarr;</span>
+              </span>
+            </Link>
+
+            {/* What We Believe */}
+            <Link
+              href="/about/beliefs"
+              className="group flex h-full flex-col rounded-xl bg-pcc-cream-light p-8 shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pcc-navy/10 text-pcc-navy">
+                <BookOpenIcon className="h-7 w-7" aria-hidden="true" />
+              </div>
+              <h3 className="mt-5 text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                What We Believe
+              </h3>
+              <p className="mt-2 flex-grow text-sm leading-relaxed text-pcc-slate">
+                The core beliefs and values that guide our church community and shape our faith.
+              </p>
+              <span className="mt-4 inline-flex items-center text-sm font-semibold text-pcc-teal">
+                Learn More <span aria-hidden="true" className="ml-1">&rarr;</span>
+              </span>
+            </Link>
+
+            {/* Our Leadership */}
+            <Link
+              href="/about/leadership"
+              className="group flex h-full flex-col rounded-xl bg-pcc-cream-light p-8 shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pcc-navy/10 text-pcc-navy">
+                <UserGroupIcon className="h-7 w-7" aria-hidden="true" />
+              </div>
+              <h3 className="mt-5 text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                Our Leadership
+              </h3>
+              <p className="mt-2 flex-grow text-sm leading-relaxed text-pcc-slate">
+                Meet the Leadership Team who oversee the mission and direction of PCC.
+              </p>
+              <span className="mt-4 inline-flex items-center text-sm font-semibold text-pcc-teal">
+                Learn More <span aria-hidden="true" className="ml-1">&rarr;</span>
+              </span>
+            </Link>
+
+            {/* Our Team — featured card with photo */}
+            <Link
+              href="/about/staff"
+              className="group flex h-full flex-col overflow-hidden rounded-xl bg-pcc-cream-light shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+            >
+              <div className="relative h-48 w-full bg-pcc-navy/10">
+                <Image
+                  src="https://wearepcc.com/wp-content/uploads/2024/01/mark-tumney.png"
+                  alt="Pastor Mark Tumney"
+                  fill
+                  className="object-cover object-top"
+                />
+              </div>
+              <div className="flex flex-grow flex-col p-8 pt-5">
+                <h3 className="text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                  Our Team
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-pcc-slate">
-                  {card.description}
+                <p className="mt-2 flex-grow text-sm leading-relaxed text-pcc-slate">
+                  Get to know the pastors and staff who serve our church family.
                 </p>
-                <span className="mt-4 inline-flex items-center text-sm font-semibold text-pcc-teal group-hover:gap-2 transition-all">
-                  {card.href.startsWith('#') ? 'Read Below' : 'Learn More'}
-                  <span aria-hidden="true" className="ml-1">&rarr;</span>
+                <span className="mt-4 inline-flex items-center text-sm font-semibold text-pcc-teal">
+                  Meet the Team <span aria-hidden="true" className="ml-1">&rarr;</span>
                 </span>
-              </Link>
-            ))}
+              </div>
+            </Link>
+
+            {/* Community Programs */}
+            <Link
+              href="/about/community"
+              className="group flex h-full flex-col rounded-xl bg-pcc-cream-light p-8 shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pcc-navy/10 text-pcc-navy">
+                <BuildingLibraryIcon className="h-7 w-7" aria-hidden="true" />
+              </div>
+              <h3 className="mt-5 text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                Community Programs
+              </h3>
+              <p className="mt-2 flex-grow text-sm leading-relaxed text-pcc-slate">
+                Preschool, community center, and other programs serving families throughout the peninsula.
+              </p>
+              <span className="mt-4 inline-flex items-center text-sm font-semibold text-pcc-teal">
+                Learn More <span aria-hidden="true" className="ml-1">&rarr;</span>
+              </span>
+            </Link>
+
+            {/* Events Calendar */}
+            <Link
+              href="/events"
+              className="group flex h-full flex-col rounded-xl bg-pcc-cream-light p-8 shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pcc-navy/10 text-pcc-navy">
+                <CalendarDaysIcon className="h-7 w-7" aria-hidden="true" />
+              </div>
+              <h3 className="mt-5 text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                Events Calendar
+              </h3>
+              <p className="mt-2 flex-grow text-sm leading-relaxed text-pcc-slate">
+                Stay up to date with worship services, special events, and community gatherings.
+              </p>
+              <span className="mt-4 inline-flex items-center text-sm font-semibold text-pcc-teal">
+                Learn More <span aria-hidden="true" className="ml-1">&rarr;</span>
+              </span>
+            </Link>
+
+            {/* Newsletter */}
+            <Link
+              href="/about/newsletter"
+              className="group flex h-full flex-col rounded-xl bg-pcc-cream-light p-8 shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2 sm:col-span-2 lg:col-span-1"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pcc-navy/10 text-pcc-navy">
+                <NewspaperIcon className="h-7 w-7" aria-hidden="true" />
+              </div>
+              <h3 className="mt-5 text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                Newsletter
+              </h3>
+              <p className="mt-2 flex-grow text-sm leading-relaxed text-pcc-slate">
+                Subscribe to our newsletter for weekly updates, stories, and encouragement.
+              </p>
+              <span className="mt-4 inline-flex items-center text-sm font-semibold text-pcc-teal">
+                Learn More <span aria-hidden="true" className="ml-1">&rarr;</span>
+              </span>
+            </Link>
           </div>
         </div>
       </section>
@@ -194,84 +264,6 @@ export default async function AboutPage() {
           </div>
         </div>
       </section>
-
-      {/* Leadership */}
-      {leadership.length > 0 && (
-        <section className="bg-pcc-cream-light">
-          <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
-            <h2 className="text-center text-3xl font-bold text-pcc-navy sm:text-4xl">
-              Our Leadership
-            </h2>
-            <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {leadership.map((member) => (
-                <div key={member.id} className="rounded-xl bg-white p-6 text-center shadow-md">
-                  <div className="mx-auto flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-pcc-navy text-3xl font-bold text-white">
-                    {member.photoUrl ? (
-                      <Image
-                        src={member.photoUrl}
-                        alt={member.name}
-                        width={96}
-                        height={96}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      member.name.split(' ').map((n) => n[0]).join('')
-                    )}
-                  </div>
-                  <h3 className="mt-4 text-lg font-bold text-pcc-navy">{member.name}</h3>
-                  <p className="text-sm text-pcc-teal">{member.role}</p>
-                  {member.email && (
-                    <a
-                      href={`mailto:${member.email}`}
-                      className="mt-2 inline-block text-xs text-pcc-slate hover:text-pcc-teal transition-colors"
-                    >
-                      {member.email}
-                    </a>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* All Staff */}
-      {staff.length > 0 && (
-        <section className="bg-white">
-          <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
-            <h2 className="text-center text-3xl font-bold text-pcc-navy sm:text-4xl">Our Staff</h2>
-            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {staff.map((member) => (
-                <div key={member.id} className="text-center">
-                  <div className="mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-pcc-cream text-xl font-bold text-pcc-navy">
-                    {member.photoUrl ? (
-                      <Image
-                        src={member.photoUrl}
-                        alt={member.name}
-                        width={80}
-                        height={80}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      member.name.split(' ').map((n) => n[0]).join('')
-                    )}
-                  </div>
-                  <h3 className="mt-3 font-bold text-pcc-navy">{member.name}</h3>
-                  <p className="text-sm text-pcc-slate">{member.role}</p>
-                  {member.email && (
-                    <a
-                      href={`mailto:${member.email}`}
-                      className="text-xs text-pcc-slate hover:text-pcc-teal transition-colors"
-                    >
-                      {member.email}
-                    </a>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Visit Us */}
       <section className="bg-gradient-to-br from-pcc-navy to-pcc-deepBlue">

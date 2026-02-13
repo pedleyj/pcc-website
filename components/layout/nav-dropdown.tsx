@@ -11,6 +11,7 @@ interface NavDropdownItem {
 
 interface NavDropdownProps {
   label: string
+  href?: string
   items: NavDropdownItem[]
   mobile?: boolean
   onNavigate?: () => void
@@ -23,7 +24,7 @@ function isExternal(href: string) {
 const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-1'
 const focusRingDark = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-1 focus-visible:ring-offset-pcc-navy'
 
-export function NavDropdown({ label, items, mobile = false, onNavigate }: NavDropdownProps) {
+export function NavDropdown({ label, href, items, mobile = false, onNavigate }: NavDropdownProps) {
   const [open, setOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -85,21 +86,34 @@ export function NavDropdown({ label, items, mobile = false, onNavigate }: NavDro
   if (mobile) {
     return (
       <div>
-        <button
-          ref={triggerRef}
-          type="button"
-          onClick={() => setOpen(!open)}
-          aria-expanded={open}
-          aria-haspopup="true"
-          aria-controls={menuId}
-          className={`flex w-full items-center justify-between rounded-md px-3 py-3 text-base font-medium hover:bg-pcc-navy-light transition-colors ${focusRingDark}`}
-        >
-          {label}
-          <ChevronDownIcon
-            className={`ml-1 h-4 w-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
-            aria-hidden="true"
-          />
-        </button>
+        <div className="flex items-center">
+          {href ? (
+            <Link
+              href={href}
+              className={`flex-1 rounded-md px-3 py-3 text-base font-medium hover:bg-pcc-navy-light transition-colors ${focusRingDark}`}
+              onClick={() => onNavigate?.()}
+            >
+              {label}
+            </Link>
+          ) : (
+            <span className="flex-1 px-3 py-3 text-base font-medium">{label}</span>
+          )}
+          <button
+            ref={triggerRef}
+            type="button"
+            onClick={() => setOpen(!open)}
+            aria-expanded={open}
+            aria-haspopup="true"
+            aria-controls={menuId}
+            aria-label={`${open ? 'Collapse' : 'Expand'} ${label} menu`}
+            className={`rounded-md p-3 hover:bg-pcc-navy-light transition-colors ${focusRingDark}`}
+          >
+            <ChevronDownIcon
+              className={`h-4 w-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+              aria-hidden="true"
+            />
+          </button>
+        </div>
         <div
           id={menuId}
           role="menu"
@@ -151,39 +165,51 @@ export function NavDropdown({ label, items, mobile = false, onNavigate }: NavDro
         timeoutRef.current = setTimeout(() => setOpen(false), 150)
       }}
     >
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={() => setOpen(!open)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            setOpen((prev) => {
-              if (!prev) requestAnimationFrame(() => focusFirstItem())
-              return !prev
-            })
-          }
-          if (e.key === 'ArrowDown') {
-            e.preventDefault()
-            if (!open) {
-              setOpen(true)
-              focusFirstItem()
-            } else {
-              focusFirstItem()
+      <div className="flex items-center">
+        {href ? (
+          <Link
+            href={href}
+            className={`rounded-sm text-sm font-medium hover:text-white/70 transition-colors ${focusRing} focus-visible:ring-offset-pcc-navy`}
+          >
+            {label}
+          </Link>
+        ) : (
+          <span className="text-sm font-medium">{label}</span>
+        )}
+        <button
+          ref={triggerRef}
+          type="button"
+          onClick={() => setOpen(!open)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setOpen((prev) => {
+                if (!prev) requestAnimationFrame(() => focusFirstItem())
+                return !prev
+              })
             }
-          }
-        }}
-        aria-expanded={open}
-        aria-haspopup="true"
-        aria-controls={menuId}
-        className={`flex items-center rounded-sm text-sm font-medium hover:text-white/70 transition-colors ${focusRing} focus-visible:ring-offset-pcc-navy`}
-      >
-        {label}
-        <ChevronDownIcon
-          className={`ml-1 h-3 w-3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
-          aria-hidden="true"
-        />
-      </button>
+            if (e.key === 'ArrowDown') {
+              e.preventDefault()
+              if (!open) {
+                setOpen(true)
+                focusFirstItem()
+              } else {
+                focusFirstItem()
+              }
+            }
+          }}
+          aria-expanded={open}
+          aria-haspopup="true"
+          aria-controls={menuId}
+          aria-label={`${open ? 'Collapse' : 'Expand'} ${label} menu`}
+          className={`ml-0.5 rounded-sm p-0.5 hover:text-white/70 transition-colors ${focusRing} focus-visible:ring-offset-pcc-navy`}
+        >
+          <ChevronDownIcon
+            className={`h-3 w-3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+            aria-hidden="true"
+          />
+        </button>
+      </div>
 
       <div
         ref={menuRef}

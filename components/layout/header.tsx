@@ -10,34 +10,46 @@ const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible
 const focusRingDark = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-1 focus-visible:ring-offset-pcc-navy'
 
 const dropdowns = {
-  'Explore Faith': [
-    { name: 'Alpha Program', href: '/explore-faith' },
-    { name: 'What We Believe', href: '/about/beliefs' },
-    { name: 'Questions About Christianity', href: '/explore-faith/faq' },
-  ],
-  Connect: [
-    { name: 'Small Groups', href: '/connect/groups' },
-    { name: 'Ministries', href: '/connect/ministries' },
-    { name: 'Serve Opportunities', href: '/connect/serve' },
-    { name: 'Member Login', href: 'https://pcc.churchcenter.com' },
-  ],
-  Support: [
-    { name: 'Prayer Requests', href: '/support/prayer' },
-    { name: 'Stephen Ministry', href: '/support/stephen-ministry' },
-    { name: 'Community Care', href: '/support/community-care' },
-    { name: 'Counseling Resources', href: '/support/counseling' },
-    { name: 'Marriage Support', href: '/support/marriage' },
-    { name: 'Support Groups', href: '/support/groups' },
-  ],
-  About: [
-    { name: 'Our Mission & Story', href: '/about' },
-    { name: 'What We Believe', href: '/about/beliefs' },
-    { name: 'Our Pastor & Leadership', href: '/about/leadership' },
-    { name: 'Staff Directory', href: '/about/staff' },
-    { name: 'Community Programs', href: '/about/community' },
-    { name: 'Events Calendar', href: '/events' },
-    { name: 'Newsletter', href: '/about/newsletter' },
-  ],
+  'Explore Faith': {
+    href: '/explore-faith',
+    items: [
+      { name: 'Alpha Program', href: '/explore-faith/alpha' },
+      { name: 'What We Believe', href: '/about/beliefs' },
+      { name: 'Questions About Christianity', href: '/explore-faith/faq' },
+    ],
+  },
+  Connect: {
+    href: '/connect',
+    items: [
+      { name: 'Small Groups', href: '/connect/groups' },
+      { name: 'Ministries', href: '/connect/ministries' },
+      { name: 'Serve Opportunities', href: '/connect/serve' },
+      { name: 'Member Login', href: 'https://pcc.churchcenter.com' },
+    ],
+  },
+  Support: {
+    href: '/support',
+    items: [
+      { name: 'Prayer Requests', href: '/support/prayer' },
+      { name: 'Stephen Ministry', href: '/support/stephen_ministry' },
+      { name: 'Community Care', href: '/support/community_care' },
+      { name: 'Counseling Resources', href: '/support/counseling' },
+      { name: 'Marriage Support', href: '/support/marriage' },
+      { name: 'Support Groups', href: '/support/support_groups' },
+    ],
+  },
+  About: {
+    href: '/about',
+    items: [
+      { name: 'Our Mission & Story', href: '/about' },
+      { name: 'What We Believe', href: '/about/beliefs' },
+      { name: 'Our Leadership', href: '/about/leadership' },
+      { name: 'Our Staff', href: '/about/staff' },
+      { name: 'Community Programs', href: '/about/community' },
+      { name: 'Events Calendar', href: '/events' },
+      { name: 'Newsletter', href: '/about/newsletter' },
+    ],
+  },
 } as const
 
 const simpleLinks = [
@@ -135,7 +147,7 @@ export function Header() {
             const dropdown = dropdowns[name as keyof typeof dropdowns]
             if (dropdown) {
               return (
-                <NavDropdown key={name} label={name} items={[...dropdown]} />
+                <NavDropdown key={name} label={name} href={dropdown.href} items={[...dropdown.items]} />
               )
             }
             const link = simpleLinks.find((l) => l.name === name)!
@@ -226,7 +238,8 @@ export function Header() {
                   <NavDropdown
                     key={name}
                     label={name}
-                    items={[...dropdown]}
+                    href={dropdown.href}
+                    items={[...dropdown.items]}
                     mobile
                     onNavigate={closeMobileMenu}
                   />

@@ -7,7 +7,11 @@ import {
   AcademicCapIcon,
   UsersIcon,
   UserGroupIcon,
+  BanknotesIcon,
 } from '@heroicons/react/24/outline'
+import { getAllSupportResources } from '@/lib/db/queries'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Support | Peninsula Covenant Church',
@@ -15,52 +19,27 @@ export const metadata: Metadata = {
     "Whatever you're facing, you're not alone. PCC offers prayer, care, counseling, and support groups.",
 }
 
-const cards = [
-  {
-    title: 'Prayer Requests',
-    description:
-      'Share your prayer needs with our caring community. We believe in the power of praying together.',
-    href: '/support/prayer',
-    icon: HandRaisedIcon,
-  },
-  {
-    title: 'Stephen Ministry',
-    description:
-      'Trained lay caregivers providing confidential, one-to-one Christian care for those going through difficult times.',
-    href: '/support/stephen-ministry',
-    icon: HeartIcon,
-  },
-  {
-    title: 'Community Care',
-    description:
-      'Meals, visits, and practical support for those in need. Our community rallies around one another.',
-    href: '/support/community-care',
-    icon: HomeModernIcon,
-  },
-  {
-    title: 'Counseling Resources',
-    description:
-      'Professional Christian counseling referrals and resources for individuals and families.',
-    href: '/support/counseling',
-    icon: AcademicCapIcon,
-  },
-  {
-    title: 'Marriage Support',
-    description:
-      'Strengthen your relationship through marriage enrichment programs, retreats, and mentoring.',
-    href: '/support/marriage',
-    icon: UsersIcon,
-  },
-  {
-    title: 'Support Groups',
-    description:
-      'Find hope and healing in a supportive group setting. Various groups meet regularly for encouragement.',
-    href: '/support/groups',
-    icon: UserGroupIcon,
-  },
-]
+const categoryIcons: Record<string, typeof HeartIcon> = {
+  stephen_ministry: HeartIcon,
+  community_care: HomeModernIcon,
+  financial: BanknotesIcon,
+  counseling: AcademicCapIcon,
+  marriage: UsersIcon,
+  support_groups: UserGroupIcon,
+}
 
-export default function SupportPage() {
+const categoryPages: Record<string, string> = {
+  stephen_ministry: '/support/stephen_ministry',
+  community_care: '/support/community_care',
+  financial: '/support/financial',
+  counseling: '/support/counseling',
+  marriage: '/support/marriage',
+  support_groups: '/support/support_groups',
+}
+
+export default async function SupportPage() {
+  const supportResources = await getAllSupportResources()
+
   return (
     <>
       {/* Hero */}
@@ -79,31 +58,64 @@ export default function SupportPage() {
         </div>
       </section>
 
-      {/* Cards */}
+      {/* Prayer Request Card */}
+      <section className="bg-pcc-cream">
+        <div className="mx-auto max-w-5xl px-4 pt-20 sm:px-6 lg:px-8">
+          <Link
+            href="/support/prayer"
+            className="group block rounded-xl bg-white p-8 shadow-md transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-pcc-sage/20 text-pcc-forest">
+                <HandRaisedIcon className="h-7 w-7" aria-hidden="true" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-pcc-navy group-hover:text-pcc-forest transition-colors">
+                  Prayer Requests
+                </h2>
+                <p className="mt-1 text-sm text-pcc-slate">
+                  Share your prayer needs with our caring community. We believe in the power of praying together.
+                </p>
+              </div>
+            </div>
+          </Link>
+        </div>
+      </section>
+
+      {/* Support Resource Cards */}
       <section className="bg-pcc-cream">
         <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {cards.map((card) => (
-              <Link
-                key={card.href}
-                href={card.href}
-                className="group rounded-xl bg-white p-8 shadow-md transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
-              >
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pcc-sage/20 text-pcc-forest">
-                  <card.icon className="h-7 w-7" aria-hidden="true" />
+            {supportResources.map((resource) => {
+              const Icon = categoryIcons[resource.category] || HeartIcon
+              const pagePath = categoryPages[resource.category] || `/support/${resource.category.replace(/_/g, '-')}`
+
+              return (
+                <div
+                  key={resource.id}
+                  className="flex h-full flex-col rounded-xl bg-white p-8 shadow-md transition-shadow hover:shadow-lg"
+                >
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pcc-sage/20 text-pcc-forest">
+                    <Icon className="h-7 w-7" aria-hidden="true" />
+                  </div>
+                  <h2 className="mt-5 text-lg font-bold text-pcc-navy">
+                    {resource.title}
+                  </h2>
+                  <p className="mt-2 flex-grow text-sm leading-relaxed text-pcc-slate">
+                    {resource.description}
+                  </p>
+                  <div className="mt-4">
+                    <Link
+                      href={pagePath}
+                      className="inline-flex items-center rounded-md bg-pcc-forest px-4 py-2 text-sm font-semibold text-white hover:bg-pcc-forest/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+                    >
+                      Learn More
+                      <span aria-hidden="true" className="ml-1">&rarr;</span>
+                    </Link>
+                  </div>
                 </div>
-                <h2 className="mt-5 text-lg font-bold text-pcc-navy group-hover:text-pcc-forest transition-colors">
-                  {card.title}
-                </h2>
-                <p className="mt-2 text-sm leading-relaxed text-pcc-slate">
-                  {card.description}
-                </p>
-                <span className="mt-4 inline-flex items-center text-sm font-semibold text-pcc-forest group-hover:gap-2 transition-all">
-                  Learn More
-                  <span aria-hidden="true" className="ml-1">&rarr;</span>
-                </span>
-              </Link>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>
