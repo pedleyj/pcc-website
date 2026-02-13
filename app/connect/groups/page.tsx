@@ -14,6 +14,8 @@ import { getAllSmallGroups } from '@/lib/db/queries'
 
 export const dynamic = 'force-dynamic'
 
+type SmallGroup = Awaited<ReturnType<typeof getAllSmallGroups>>[number]
+
 export const metadata: Metadata = {
   title: 'Small Groups | Peninsula Covenant Church',
   description: 'Connect with others in Growth Groups or Life Groups at PCC.',
@@ -21,8 +23,8 @@ export const metadata: Metadata = {
 
 export default async function GroupsPage() {
   const allGroups = await getAllSmallGroups()
-  const growthGroups = allGroups.filter((g) => g.type === 'growth')
-  const lifeGroups = allGroups.filter((g) => g.type === 'life')
+  const growthGroups = allGroups.filter((g: SmallGroup) => g.type === 'growth')
+  const lifeGroups = allGroups.filter((g: SmallGroup) => g.type === 'life')
 
   return (
     <>
@@ -167,7 +169,7 @@ export default async function GroupsPage() {
   )
 }
 
-function GroupCard({ group }: { group: Awaited<ReturnType<typeof getAllSmallGroups>>[number] }) {
+function GroupCard({ group }: { group: SmallGroup }) {
   const isGrowth = group.type === 'growth'
   const spotsRemaining = group.capacity ? group.capacity - group.currentMembers : null
 
