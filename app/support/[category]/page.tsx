@@ -17,6 +17,8 @@ import { getSupportResourcesByCategory, getAllSupportResources } from '@/lib/db/
 
 export const dynamic = 'force-dynamic'
 
+type SupportResource = Awaited<ReturnType<typeof getAllSupportResources>>[number]
+
 const categoryIcons: Record<string, typeof HeartIcon> = {
   stephen_ministry: HeartIcon,
   community_care: HomeModernIcon,
@@ -142,7 +144,7 @@ export default async function SupportResourcePage({
   // Fetch other resources for the "related" section
   const allResources = await getAllSupportResources()
   const otherResources = allResources
-    .filter((r) => r.category !== resource.category)
+    .filter((r: SupportResource) => r.category !== resource.category)
     .slice(0, 3)
 
   return (
@@ -288,7 +290,7 @@ export default async function SupportResourcePage({
               Other Ways We Can Support You
             </h2>
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {otherResources.map((r) => {
+              {otherResources.map((r: SupportResource) => {
                 const OtherIcon = categoryIcons[r.category] || HeartIcon
                 return (
                   <Link

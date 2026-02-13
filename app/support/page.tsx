@@ -13,6 +13,8 @@ import { getAllSupportResources } from '@/lib/db/queries'
 
 export const dynamic = 'force-dynamic'
 
+type SupportResource = Awaited<ReturnType<typeof getAllSupportResources>>[number]
+
 export const metadata: Metadata = {
   title: 'Support | Peninsula Covenant Church',
   description:
@@ -86,7 +88,7 @@ export default async function SupportPage() {
       <section className="bg-pcc-cream">
         <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {supportResources.map((resource) => {
+            {supportResources.map((resource: SupportResource) => {
               const Icon = categoryIcons[resource.category] || HeartIcon
               const pagePath = categoryPages[resource.category] || `/support/${resource.category.replace(/_/g, '-')}`
 
