@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import Image from 'next/image'
@@ -6,6 +7,11 @@ import { HeroCarousel } from '@/components/home/hero-carousel'
 import { getSiteSettings, getLatestMessages, getUpcomingEvents, getCurrentAlphaSession, getActiveMinistries } from '@/lib/db/queries'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Peninsula Covenant Church | Redwood City, CA',
+  description: 'Know Jesus deeply. Follow Him faithfully. Guide the next generation to do the same. A Christ-centered community in Redwood City, CA.',
+}
 
 export default async function Home() {
   const [siteSettings, messages, events, alphaSession, ministries] = await Promise.all([
