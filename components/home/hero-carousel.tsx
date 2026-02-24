@@ -81,7 +81,7 @@ export function HeroCarousel() {
             Plan Your Visit
           </a>
           <a
-            href="#alpha"
+            href="/explore-faith/alpha"
             className="w-full rounded-lg bg-pcc-teal px-8 py-3 text-lg font-semibold text-white shadow-lg hover:bg-pcc-teal-light transition-colors sm:w-auto"
           >
             Join Alpha

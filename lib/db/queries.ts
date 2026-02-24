@@ -11,6 +11,49 @@ export async function getLatestMessages(limit = 4) {
   })
 }
 
+export async function getMessageById(id: string) {
+  return prisma.message.findUnique({ where: { id } })
+}
+
+export async function getAllMessages(options?: { series?: string; speaker?: string }) {
+  return prisma.message.findMany({
+    where: {
+      ...(options?.series ? { series: options.series } : {}),
+      ...(options?.speaker ? { speaker: options.speaker } : {}),
+    },
+    orderBy: { date: 'desc' },
+  })
+}
+
+export async function getMessagesBySeries(series: string, excludeId?: string) {
+  return prisma.message.findMany({
+    where: {
+      series,
+      ...(excludeId ? { id: { not: excludeId } } : {}),
+    },
+    orderBy: { date: 'desc' },
+  })
+}
+
+export async function getDistinctSeries() {
+  const results = await prisma.message.findMany({
+    where: { series: { not: null } },
+    select: { series: true },
+    distinct: ['series'],
+    orderBy: { date: 'desc' },
+  })
+  return results.map((r) => r.series!).filter(Boolean)
+}
+
+export async function getDistinctSpeakers() {
+  const results = await prisma.message.findMany({
+    select: { speaker: true },
+    distinct: ['speaker'],
+    orderBy: { speaker: 'asc' },
+  })
+  return results.map((r) => r.speaker)
+}
+
 export async function getUpcomingEvents(limit = 3) {
   return prisma.event.findMany({
     where: {

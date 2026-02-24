@@ -24,8 +24,7 @@ export default async function GivePage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative flex min-h-[50vh] items-center justify-center bg-gradient-to-br from-pcc-gold-dark to-pcc-orange">
-        <div className="absolute inset-0 bg-black/10" />
+      <section className="relative flex min-h-[50vh] items-center justify-center bg-pcc-navy">
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
           <h1
             className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl"
@@ -200,7 +199,7 @@ export default async function GivePage() {
       </section>
 
       {/* Bottom CTA */}
-      <section className="bg-gradient-to-br from-pcc-gold-dark to-pcc-orange">
+      <section className="bg-pcc-navy">
         <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-white sm:text-4xl">
             Ready to Make a Difference?

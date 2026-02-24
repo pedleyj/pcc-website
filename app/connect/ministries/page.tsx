@@ -16,8 +16,7 @@ export default async function MinistriesPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative flex min-h-[50vh] items-center justify-center bg-gradient-to-br from-pcc-teal-dark to-pcc-navy">
-        <div className="absolute inset-0 bg-black/10" />
+      <section className="relative flex min-h-[50vh] items-center justify-center bg-pcc-navy">
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
           <h1
             className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl"
@@ -95,7 +94,7 @@ export default async function MinistriesPage() {
       </section>
 
       {/* Get Involved CTA */}
-      <section className="bg-gradient-to-br from-pcc-teal-dark to-pcc-navy">
+      <section className="bg-pcc-navy">
         <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-white sm:text-4xl">Get Involved</h2>
           <p className="mt-4 text-lg text-white/80">

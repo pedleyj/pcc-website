@@ -11,8 +11,7 @@ export default function EventsPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative flex min-h-[30vh] items-center justify-center bg-gradient-to-br from-pcc-navy to-pcc-deepBlue">
-        <div className="absolute inset-0 bg-black/10" />
+      <section className="relative flex min-h-[30vh] items-center justify-center bg-pcc-navy">
         <div className="relative mx-auto max-w-4xl px-4 py-16 text-center sm:px-6 lg:px-8">
           <CalendarDaysIcon className="mx-auto h-12 w-12 text-pcc-gold" aria-hidden="true" />
           <h1

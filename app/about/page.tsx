@@ -33,8 +33,7 @@ export default async function AboutPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative flex min-h-[50vh] items-center justify-center bg-gradient-to-br from-pcc-navy to-pcc-deepBlue">
-        <div className="absolute inset-0 bg-black/10" />
+      <section className="relative flex min-h-[50vh] items-center justify-center bg-pcc-navy">
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
           <h1
             className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl"
@@ -266,7 +265,7 @@ export default async function AboutPage() {
       </section>
 
       {/* Visit Us */}
-      <section className="bg-gradient-to-br from-pcc-navy to-pcc-deepBlue">
+      <section className="bg-pcc-navy">
         <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-white sm:text-4xl">Visit Us</h2>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 text-lg text-white/80 sm:flex-row sm:gap-8">

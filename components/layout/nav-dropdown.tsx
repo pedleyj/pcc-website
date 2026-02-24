@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { ChevronDownIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
+import { cn } from '@/lib/utils/cn'
 
 interface NavDropdownItem {
   name: string
@@ -15,6 +16,7 @@ interface NavDropdownProps {
   items: NavDropdownItem[]
   mobile?: boolean
   onNavigate?: () => void
+  isActive?: boolean
 }
 
 function isExternal(href: string) {
@@ -24,7 +26,7 @@ function isExternal(href: string) {
 const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-1'
 const focusRingDark = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-1 focus-visible:ring-offset-pcc-navy'
 
-export function NavDropdown({ label, href, items, mobile = false, onNavigate }: NavDropdownProps) {
+export function NavDropdown({ label, href, items, mobile = false, onNavigate, isActive = false }: NavDropdownProps) {
   const [open, setOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -90,7 +92,11 @@ export function NavDropdown({ label, href, items, mobile = false, onNavigate }: 
           {href ? (
             <Link
               href={href}
-              className={`flex-1 rounded-md px-3 py-3 text-base font-medium hover:bg-pcc-navy-light transition-colors ${focusRingDark}`}
+              className={cn(
+                'flex-1 rounded-md px-3 py-3 text-base font-medium transition-colors',
+                isActive ? 'bg-pcc-navy-light text-white' : 'hover:bg-pcc-navy-light',
+                focusRingDark
+              )}
               onClick={() => onNavigate?.()}
             >
               {label}
@@ -165,11 +171,14 @@ export function NavDropdown({ label, href, items, mobile = false, onNavigate }: 
         timeoutRef.current = setTimeout(() => setOpen(false), 150)
       }}
     >
-      <div className="flex items-center">
+      <div className={cn(
+        'flex items-center rounded-md border px-3 py-1.5 transition-colors',
+        isActive ? 'border-white/60' : 'border-transparent hover:border-white/40'
+      )}>
         {href ? (
           <Link
             href={href}
-            className={`rounded-sm text-sm font-medium hover:text-white/70 transition-colors ${focusRing} focus-visible:ring-offset-pcc-navy`}
+            className={`text-sm font-medium transition-colors ${focusRing} focus-visible:ring-offset-pcc-navy`}
           >
             {label}
           </Link>
@@ -202,7 +211,7 @@ export function NavDropdown({ label, href, items, mobile = false, onNavigate }: 
           aria-haspopup="true"
           aria-controls={menuId}
           aria-label={`${open ? 'Collapse' : 'Expand'} ${label} menu`}
-          className={`ml-0.5 rounded-sm p-0.5 hover:text-white/70 transition-colors ${focusRing} focus-visible:ring-offset-pcc-navy`}
+          className={`ml-0.5 rounded-sm p-0.5 transition-colors ${focusRing} focus-visible:ring-offset-pcc-navy`}
         >
           <ChevronDownIcon
             className={`h-3 w-3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}

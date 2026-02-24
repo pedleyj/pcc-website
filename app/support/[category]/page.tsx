@@ -150,8 +150,7 @@ export default async function SupportResourcePage({
   return (
     <>
       {/* Hero */}
-      <section className="relative flex min-h-[40vh] items-center justify-center bg-gradient-to-br from-pcc-sage-dark to-pcc-forest">
-        <div className="absolute inset-0 bg-black/15" />
+      <section className="relative flex min-h-[40vh] items-center justify-center bg-pcc-navy">
         <div className="relative mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav className="mb-8 flex items-center justify-center gap-1 text-sm text-white/70" aria-label="Breadcrumb">

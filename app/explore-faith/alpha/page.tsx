@@ -28,17 +28,16 @@ export default async function AlphaPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative flex min-h-[60vh] items-center justify-center overflow-hidden bg-gradient-to-br from-pcc-emerald-dark to-pcc-forest">
-        <div className="absolute inset-0 bg-black/20" />
+      <section className="relative flex min-h-[60vh] items-center justify-center overflow-hidden bg-pcc-navy">
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
           <h1
             className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl"
             style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}
           >
-            Discover Jesus Through Alpha
+            Explore Life&apos;s Big Questions
           </h1>
           <p className="mt-6 text-xl text-white/90 sm:text-2xl">
-            Explore life&apos;s big questions in a welcoming community
+            No matter who you are or what you believe, there&apos;s a seat for you at the Alpha table.
           </p>
           {alphaSession && (
             <a
@@ -58,9 +57,9 @@ export default async function AlphaPage() {
             <h2 className="text-3xl font-bold text-pcc-navy sm:text-4xl">What is Alpha?</h2>
             <div className="mx-auto mt-8 max-w-3xl space-y-6 text-lg leading-relaxed text-pcc-charcoal">
               <p>
-                Alpha is a series of sessions exploring the Christian faith. Each talk looks at a
-                different question around faith and is designed to create conversation. It&apos;s a
-                safe space to discuss life&apos;s big questions with others who are exploring faith.
+                Alpha is a series of sessions exploring questions of life, faith, and meaning. Each talk looks at a
+                different question and is designed to create conversation. It&apos;s a
+                safe space to discuss life&apos;s big questions with others who are on the same journey.
               </p>
               <p className="text-xl font-semibold text-pcc-emerald">
                 No pressure. No follow-up. No charge.
@@ -223,8 +222,8 @@ export default async function AlphaPage() {
             {[
               { icon: LightBulbIcon, title: 'The Curious', desc: 'Anyone with questions about life, faith, or meaning' },
               { icon: ChatBubbleLeftRightIcon, title: 'The Skeptic', desc: 'Those who have doubts and want honest conversation' },
-              { icon: ArrowPathIcon, title: 'The Returning', desc: 'People reconnecting with faith after time away' },
-              { icon: HeartIcon, title: 'The New Believer', desc: 'New Christians wanting a strong foundation' },
+              { icon: ArrowPathIcon, title: 'The Searching', desc: 'People looking for purpose, community, or something more' },
+              { icon: HeartIcon, title: 'The Open-Minded', desc: 'Anyone willing to explore new ideas in a welcoming space' },
             ].map((item) => (
               <div key={item.title} className="text-center">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-pcc-teal/15 text-pcc-teal">
@@ -280,7 +279,7 @@ export default async function AlphaPage() {
             {[
               { q: 'Is there a cost?', a: 'No! Alpha is completely free, including dinner every session.' },
               { q: 'What if I miss a session?', a: 'That\'s okay! Each session covers a different topic, so you can jump back in anytime.' },
-              { q: 'Do I need to know anything about Christianity?', a: 'Not at all. Alpha is designed for people at any stage — whether you\'ve never opened a Bible or grew up in church.' },
+              { q: 'Do I need to know anything about Christianity?', a: 'Not at all. Alpha is designed for people at any stage — whether you have deep questions, casual curiosity, or simply want good conversation over dinner.' },
               { q: 'Will I be pressured to believe anything?', a: 'Absolutely not. Alpha is a pressure-free environment. There\'s no follow-up, no commitment expected. Just come and explore.' },
               { q: 'Can I bring a friend?', a: 'Yes! Alpha is even better with a friend. You\'re welcome to bring anyone who might be interested.' },
               { q: 'Is childcare available?', a: 'Yes, free childcare is provided during every Alpha session.' },
@@ -296,7 +295,7 @@ export default async function AlphaPage() {
 
       {/* Bottom CTA */}
       {alphaSession && (
-        <section className="bg-gradient-to-br from-pcc-emerald-dark to-pcc-forest">
+        <section className="bg-pcc-navy">
           <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-white sm:text-4xl">
               Ready to Explore?

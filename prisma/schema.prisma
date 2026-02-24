@@ -37,6 +37,7 @@ model Message {
   description String?  @db.Text
   videoUrl    String?
   audioUrl    String?
+  resourceUrl String?
   thumbnail   String?
   tags        String[]
   createdAt   DateTime @default(now())

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default async function GatheringsPage() {
   const [siteSettings, messages, events] = await Promise.all([
     getSiteSettings(),
-    getLatestMessages(8),
+    getLatestMessages(4),
     getUpcomingEvents(6),
   ])
 
@@ -37,8 +37,7 @@ export default async function GatheringsPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative flex min-h-[50vh] items-center justify-center bg-gradient-to-br from-pcc-deepBlue to-pcc-navy">
-        <div className="absolute inset-0 bg-black/10" />
+      <section className="relative flex min-h-[50vh] items-center justify-center bg-pcc-navy">
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
           <h1
             className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl"
@@ -180,6 +179,16 @@ export default async function GatheringsPage() {
                   </div>
                 </Link>
               ))}
+            </div>
+
+            <div className="mt-12 text-center">
+              <Link
+                href="/messages"
+                className="inline-flex items-center gap-2 text-lg font-semibold text-pcc-navy hover:text-pcc-teal transition-colors"
+              >
+                View All Messages
+                <ArrowRightIcon className="h-5 w-5" />
+              </Link>
             </div>
           </div>
         </section>

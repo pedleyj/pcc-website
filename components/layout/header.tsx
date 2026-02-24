@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Logo } from './logo'
 import { NavDropdown } from './nav-dropdown'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { cn } from '@/lib/utils/cn'
 
 const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-1'
 const focusRingDark = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-1 focus-visible:ring-offset-pcc-navy'
@@ -60,7 +62,13 @@ const simpleLinks = [
 
 const navOrder = ["I'm New", 'Gatherings', 'Explore Faith', 'Connect', 'Support', 'About', 'Give'] as const
 
+function isActivePath(pathname: string, href: string) {
+  if (href === '/') return pathname === '/'
+  return pathname === href || pathname.startsWith(href + '/')
+}
+
 export function Header() {
+  const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
@@ -147,15 +155,21 @@ export function Header() {
             const dropdown = dropdowns[name as keyof typeof dropdowns]
             if (dropdown) {
               return (
-                <NavDropdown key={name} label={name} href={dropdown.href} items={[...dropdown.items]} />
+                <NavDropdown key={name} label={name} href={dropdown.href} items={[...dropdown.items]} isActive={isActivePath(pathname, dropdown.href)} />
               )
             }
             const link = simpleLinks.find((l) => l.name === name)!
+            const active = isActivePath(pathname, link.href)
             return (
               <Link
                 key={name}
                 href={link.href}
-                className={`rounded-sm text-sm font-medium hover:text-white/70 transition-colors ${focusRing} focus-visible:ring-offset-pcc-navy`}
+                className={cn(
+                  'rounded-md border px-3 py-1.5 text-sm font-medium transition-colors',
+                  active ? 'border-white/60' : 'border-transparent hover:border-white/40',
+                  focusRing,
+                  'focus-visible:ring-offset-pcc-navy'
+                )}
               >
                 {name}
               </Link>
@@ -166,7 +180,7 @@ export function Header() {
         {/* CTA Button */}
         <div className="hidden md:flex">
           <Link
-            href="/explore-faith"
+            href="/explore-faith/alpha"
             className={`rounded-lg bg-pcc-gold px-4 py-2 text-sm font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors ${focusRing} focus-visible:ring-offset-pcc-navy`}
           >
             Join Alpha
@@ -242,15 +256,21 @@ export function Header() {
                     items={[...dropdown.items]}
                     mobile
                     onNavigate={closeMobileMenu}
+                    isActive={isActivePath(pathname, dropdown.href)}
                   />
                 )
               }
               const link = simpleLinks.find((l) => l.name === name)!
+              const active = isActivePath(pathname, link.href)
               return (
                 <Link
                   key={name}
                   href={link.href}
-                  className={`block rounded-md px-3 py-3 text-base font-medium hover:bg-pcc-navy-light transition-colors ${focusRingDark}`}
+                  className={cn(
+                    'block rounded-md px-3 py-3 text-base font-medium transition-colors',
+                    active ? 'bg-pcc-navy-light text-white' : 'hover:bg-pcc-navy-light',
+                    focusRingDark
+                  )}
                   onClick={closeMobileMenu}
                 >
                   {name}
@@ -262,7 +282,7 @@ export function Header() {
           {/* Sticky CTA at bottom */}
           <div className="border-t border-white/10 px-4 py-4">
             <Link
-              href="/explore-faith"
+              href="/explore-faith/alpha"
               className={`block rounded-lg bg-pcc-gold px-3 py-3 text-center text-base font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors ${focusRing}`}
               onClick={closeMobileMenu}
             >
