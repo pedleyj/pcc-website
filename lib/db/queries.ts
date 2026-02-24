@@ -68,10 +68,13 @@ export async function getUpcomingEvents(limit = 3) {
 }
 
 export async function getCurrentAlphaSession() {
+  const fourWeeksAgo = new Date()
+  fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28)
+
   return prisma.alphaSession.findFirst({
     where: {
       registrationOpen: true,
-      startDate: { gte: new Date() },
+      startDate: { gte: fourWeeksAgo },
     },
     orderBy: { startDate: 'asc' },
   })

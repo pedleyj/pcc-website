@@ -22,6 +22,13 @@ export const metadata: Metadata = {
   description: 'Explore life, faith, and meaning through Alpha at PCC. Free dinner, great conversation, no pressure.',
 }
 
+function getNextAlphaSeason() {
+  const month = new Date().getMonth() // 0-indexed
+  // Feb (1) through July (6) → next is Fall; Aug (7) through Jan (0) → next is Spring
+  if (month >= 1 && month <= 6) return 'In The Fall'
+  return 'In The Spring'
+}
+
 export default async function AlphaPage() {
   const alphaSession = await getCurrentAlphaSession()
 
@@ -39,14 +46,12 @@ export default async function AlphaPage() {
           <p className="mt-6 text-xl text-white/90 sm:text-2xl">
             No matter who you are or what you believe, there&apos;s a seat for you at the Alpha table.
           </p>
-          {alphaSession && (
-            <a
-              href="#register"
-              className="mt-8 inline-block rounded-lg bg-pcc-gold px-8 py-3 text-lg font-semibold text-pcc-navy shadow-lg hover:bg-pcc-gold-light transition-colors"
-            >
-              Register Now
-            </a>
-          )}
+          <a
+            href="#register"
+            className="mt-8 inline-block rounded-lg bg-pcc-gold px-8 py-3 text-lg font-semibold text-pcc-navy shadow-lg hover:bg-pcc-gold-light transition-colors"
+          >
+            {alphaSession ? 'Register Now' : 'Get Notified'}
+          </a>
         </div>
       </section>
 
@@ -142,75 +147,98 @@ export default async function AlphaPage() {
         </div>
       </section>
 
-      {/* Next Session Details */}
-      {alphaSession && (
-        <section id="register" className="scroll-mt-16 bg-pcc-emerald/10 border-t-4 border-pcc-emerald">
-          <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
-            <h2 className="text-center text-3xl font-bold text-pcc-emerald sm:text-4xl">
-              Next Session Details
-            </h2>
+      {/* Registration Section */}
+      <section id="register" className="scroll-mt-16 bg-pcc-emerald/10 border-t-4 border-pcc-emerald">
+        <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
+          {alphaSession ? (
+            <>
+              <h2 className="text-center text-3xl font-bold text-pcc-emerald sm:text-4xl">
+                Register for Alpha
+              </h2>
 
-            <div className="mx-auto mt-10 max-w-2xl rounded-2xl bg-white p-8 shadow-lg">
-              <div className="grid gap-6 sm:grid-cols-2">
-                <div className="flex items-start gap-3">
-                  <CalendarDaysIcon className="mt-0.5 h-6 w-6 shrink-0 text-pcc-emerald" />
-                  <div>
-                    <p className="text-sm font-medium text-pcc-slate">Starts</p>
-                    <p className="text-lg font-semibold text-pcc-navy">
-                      {format(new Date(alphaSession.startDate), 'MMMM d, yyyy')}
+              <div className="mx-auto mt-10 max-w-2xl rounded-2xl bg-white p-8 shadow-lg">
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="flex items-start gap-3">
+                    <CalendarDaysIcon className="mt-0.5 h-6 w-6 shrink-0 text-pcc-emerald" />
+                    <div>
+                      <p className="text-sm font-medium text-pcc-slate">Starts</p>
+                      <p className="text-lg font-semibold text-pcc-navy">
+                        {format(new Date(alphaSession.startDate), 'MMMM d, yyyy')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CalendarDaysIcon className="mt-0.5 h-6 w-6 shrink-0 text-pcc-emerald" />
+                    <div>
+                      <p className="text-sm font-medium text-pcc-slate">Ends</p>
+                      <p className="text-lg font-semibold text-pcc-navy">
+                        {format(new Date(alphaSession.endDate), 'MMMM d, yyyy')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <ClockIcon className="mt-0.5 h-6 w-6 shrink-0 text-pcc-emerald" />
+                    <div>
+                      <p className="text-sm font-medium text-pcc-slate">Meeting</p>
+                      <p className="text-lg font-semibold text-pcc-navy">
+                        {alphaSession.meetingDay}, {alphaSession.meetingTime}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <MapPinIcon className="mt-0.5 h-6 w-6 shrink-0 text-pcc-emerald" />
+                    <div>
+                      <p className="text-sm font-medium text-pcc-slate">Location</p>
+                      <p className="text-lg font-semibold text-pcc-navy">{alphaSession.location}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {alphaSession.maxCapacity && (
+                  <div className="mt-6 flex items-center justify-center gap-2">
+                    <UserGroupIcon className="h-5 w-5 text-pcc-emerald" />
+                    <p className="text-lg font-semibold text-pcc-emerald">
+                      {alphaSession.maxCapacity - alphaSession.currentCount} spots remaining
                     </p>
                   </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <CalendarDaysIcon className="mt-0.5 h-6 w-6 shrink-0 text-pcc-emerald" />
-                  <div>
-                    <p className="text-sm font-medium text-pcc-slate">Ends</p>
-                    <p className="text-lg font-semibold text-pcc-navy">
-                      {format(new Date(alphaSession.endDate), 'MMMM d, yyyy')}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <ClockIcon className="mt-0.5 h-6 w-6 shrink-0 text-pcc-emerald" />
-                  <div>
-                    <p className="text-sm font-medium text-pcc-slate">Meeting</p>
-                    <p className="text-lg font-semibold text-pcc-navy">
-                      {alphaSession.meetingDay}, {alphaSession.meetingTime}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <MapPinIcon className="mt-0.5 h-6 w-6 shrink-0 text-pcc-emerald" />
-                  <div>
-                    <p className="text-sm font-medium text-pcc-slate">Location</p>
-                    <p className="text-lg font-semibold text-pcc-navy">{alphaSession.location}</p>
-                  </div>
-                </div>
+                )}
               </div>
 
-              {alphaSession.maxCapacity && (
-                <div className="mt-6 flex items-center justify-center gap-2">
-                  <UserGroupIcon className="h-5 w-5 text-pcc-emerald" />
-                  <p className="text-lg font-semibold text-pcc-emerald">
-                    {alphaSession.maxCapacity - alphaSession.currentCount} spots remaining
-                  </p>
-                </div>
-              )}
-
-              <div className="mt-8 text-center">
+              {/* Embedded Registration Form */}
+              <div className="mx-auto mt-10 max-w-2xl overflow-hidden rounded-2xl bg-white shadow-lg">
+                <iframe
+                  src={`${alphaSession.registrationUrl}?embed=true`}
+                  width="100%"
+                  style={{ border: 0, minHeight: '600px' }}
+                  title="Alpha Registration Form"
+                  loading="lazy"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-center text-3xl font-bold text-pcc-emerald sm:text-4xl">
+                Alpha Returns {getNextAlphaSeason()}
+              </h2>
+              <div className="mx-auto mt-10 max-w-2xl rounded-2xl bg-white p-8 text-center shadow-lg">
+                <p className="text-lg text-pcc-charcoal">
+                  We run Alpha twice a year — in the spring and fall. The next session is coming up{' '}
+                  {getNextAlphaSeason().toLowerCase()}.
+                </p>
+                <p className="mt-4 text-pcc-slate">
+                  Want to be notified when registration opens?
+                </p>
                 <a
-                  href={alphaSession.registrationUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block rounded-lg bg-pcc-emerald px-10 py-4 text-lg font-bold text-white shadow-md hover:bg-pcc-emerald-light transition-colors"
+                  href="mailto:info@wearepcc.com?subject=Alpha%20Interest"
+                  className="mt-6 inline-block rounded-lg bg-pcc-emerald px-8 py-3 text-lg font-semibold text-white shadow-md hover:bg-pcc-emerald-light transition-colors"
                 >
-                  Register for Alpha
+                  Let Us Know You&apos;re Interested
                 </a>
               </div>
-            </div>
-          </div>
-        </section>
-      )}
+            </>
+          )}
+        </div>
+      </section>
 
       {/* Who is Alpha For */}
       <section className="bg-white">
@@ -294,27 +322,39 @@ export default async function AlphaPage() {
       </section>
 
       {/* Bottom CTA */}
-      {alphaSession && (
-        <section className="bg-pcc-navy">
-          <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-white sm:text-4xl">
-              Ready to Explore?
-            </h2>
-            <p className="mt-4 text-lg text-white/80">
-              Join us for Alpha — the next session starts{' '}
-              {format(new Date(alphaSession.startDate), 'MMMM d, yyyy')}.
-            </p>
-            <a
-              href={alphaSession.registrationUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-8 inline-block rounded-lg bg-pcc-gold px-10 py-4 text-lg font-bold text-pcc-navy shadow-lg hover:bg-pcc-gold-light transition-colors"
-            >
-              Register for Alpha
-            </a>
-          </div>
-        </section>
-      )}
+      <section className="bg-pcc-navy">
+        <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-white sm:text-4xl">
+            Ready to Explore?
+          </h2>
+          {alphaSession ? (
+            <>
+              <p className="mt-4 text-lg text-white/80">
+                Join us for Alpha — the next session starts{' '}
+                {format(new Date(alphaSession.startDate), 'MMMM d, yyyy')}.
+              </p>
+              <a
+                href="#register"
+                className="mt-8 inline-block rounded-lg bg-pcc-gold px-10 py-4 text-lg font-bold text-pcc-navy shadow-lg hover:bg-pcc-gold-light transition-colors"
+              >
+                Register for Alpha
+              </a>
+            </>
+          ) : (
+            <>
+              <p className="mt-4 text-lg text-white/80">
+                Alpha returns {getNextAlphaSeason().toLowerCase()}. Let us know you&apos;re interested!
+              </p>
+              <a
+                href="#register"
+                className="mt-8 inline-block rounded-lg bg-pcc-gold px-10 py-4 text-lg font-bold text-pcc-navy shadow-lg hover:bg-pcc-gold-light transition-colors"
+              >
+                Get Notified
+              </a>
+            </>
+          )}
+        </div>
+      </section>
     </>
   )
 }
