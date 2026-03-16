@@ -41,8 +41,8 @@ async function sendPrayerNotification(data: {
 
     await resend.emails.send({
       from: 'PCC Prayer <onboarding@resend.dev>',
-      to: 'pedleyj+prayers@gmail.com',
-      subject: `New Prayer Request - ${data.name}`,
+      to: 'pedleyj@gmail.com',
+      subject: `[PCC PRAYER REQUEST] ${data.name}`,
       text: `New Prayer Request Submitted
 
 Name: ${data.name}
