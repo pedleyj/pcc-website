@@ -76,19 +76,19 @@ export function HeroCarousel() {
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a
             href="#services"
-            className="w-full rounded-lg bg-pcc-gold px-8 py-3 text-lg font-semibold text-pcc-navy shadow-lg hover:bg-pcc-gold-light transition-colors sm:w-auto"
+            className="w-full rounded-lg bg-pcc-gold px-8 py-3 text-lg font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2 sm:w-auto"
           >
             Plan Your Visit
           </a>
           <a
             href="/explore-faith/alpha"
-            className="w-full rounded-lg bg-pcc-teal px-8 py-3 text-lg font-semibold text-white shadow-lg hover:bg-pcc-teal-light transition-colors sm:w-auto"
+            className="w-full rounded-lg bg-pcc-teal px-8 py-3 text-lg font-semibold text-white hover:bg-pcc-teal-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2 sm:w-auto"
           >
             Join Alpha
           </a>
           <a
             href="#messages"
-            className="w-full rounded-lg border-2 border-white px-8 py-3 text-lg font-semibold text-white shadow-lg backdrop-blur-sm hover:bg-white/10 transition-colors sm:w-auto"
+            className="w-full rounded-lg border-2 border-white px-8 py-3 text-lg font-semibold text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 sm:w-auto"
           >
             Watch Latest
           </a>

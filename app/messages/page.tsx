@@ -6,7 +6,7 @@ import { BookOpenIcon, FunnelIcon } from '@heroicons/react/24/outline'
 import { getAllMessages, getDistinctSeries, getDistinctSpeakers } from '@/lib/db/queries'
 import { FilterSelect } from '@/components/messages/filter-select'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Messages | Peninsula Covenant Church',
@@ -107,7 +107,7 @@ export default async function MessagesPage({
                     )}
                   </div>
                   <div className="p-4">
-                    <h3 className="font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                    <h3 className="text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
                       {message.title}
                     </h3>
                     <p className="mt-1 text-sm text-pcc-charcoal">{message.speaker}</p>

@@ -11,7 +11,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { getSiteSettings } from '@/lib/db/queries'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Give | Peninsula Covenant Church',
@@ -28,7 +28,7 @@ export default async function GivePage() {
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
           <h1
             className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl"
-            style={{ textShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
+            style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}
           >
             Generosity Changes Lives
           </h1>
@@ -40,7 +40,7 @@ export default async function GivePage() {
               href={siteSettings.donationUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-block rounded-lg bg-white px-8 py-3 text-lg font-semibold text-pcc-navy shadow-lg hover:bg-pcc-cream transition-colors"
+              className="mt-8 inline-block rounded-lg bg-white px-8 py-3 text-lg font-semibold text-pcc-navy hover:bg-pcc-cream transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
             >
               Give Online
             </a>
@@ -133,7 +133,7 @@ export default async function GivePage() {
                   href={siteSettings.donationUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-block rounded-lg bg-pcc-gold px-6 py-2 text-sm font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors"
+                  className="mt-4 inline-block rounded-lg bg-pcc-gold px-6 py-2.5 text-sm font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
                 >
                   Give Now
                 </a>
@@ -212,7 +212,7 @@ export default async function GivePage() {
               href={siteSettings.donationUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-block rounded-lg bg-white px-10 py-4 text-lg font-bold text-pcc-navy shadow-lg hover:bg-pcc-cream transition-colors"
+              className="mt-8 inline-block rounded-lg bg-white px-10 py-4 text-lg font-semibold text-pcc-navy hover:bg-pcc-cream transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
             >
               Give Online
             </a>

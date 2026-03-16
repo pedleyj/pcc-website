@@ -1,11 +1,38 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { BuildingLibraryIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
+import { AcademicCapIcon, BuildingLibraryIcon, UserGroupIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 
 export const metadata: Metadata = {
   title: 'Community Programs | Peninsula Covenant Church',
   description: 'Preschool, community center, and programs serving families at PCC.',
 }
+
+const programs = [
+  {
+    name: 'PCC Preschool',
+    href: 'https://www.peninsulacovenantpreschool.com/',
+    icon: AcademicCapIcon,
+    description:
+      'A nurturing, play-based preschool for children ages 2 through 5. Our experienced teachers create a warm, supportive environment where young learners build social skills, confidence, and a love of learning through hands-on exploration and discovery.',
+    detail: 'Located on the PCC campus in Redwood City, the preschool has been serving families on the peninsula for decades.',
+  },
+  {
+    name: 'Peninsula Community Center',
+    href: 'https://peninsulacommunitycenter.com/',
+    icon: BuildingLibraryIcon,
+    description:
+      'A vibrant community hub offering fitness classes, enrichment programs, and facility rentals for families throughout the peninsula. From youth sports to adult wellness, the Community Center provides affordable, accessible programming for people of all ages.',
+    detail: 'Open to the public and located on the PCC campus, the Center hosts classes, camps, and community events year-round.',
+  },
+  {
+    name: 'School Age Child Care (SACC)',
+    href: 'https://pccsacc.com/',
+    icon: UserGroupIcon,
+    description:
+      'Before- and after-school care for elementary-age children, providing a safe and engaging environment during the hours when families need it most. Kids enjoy homework help, creative activities, outdoor play, and friendships in a caring, structured setting.',
+    detail: 'SACC partners with local schools to offer convenient pickup and drop-off, giving families peace of mind throughout the school year.',
+  },
+]
 
 export default function CommunityPage() {
   return (
@@ -24,44 +51,58 @@ export default function CommunityPage() {
         </div>
       </section>
 
+      {/* Intro */}
       <section className="bg-pcc-cream">
-        <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 lg:px-8">
-          <div className="rounded-xl bg-white p-10 shadow-md">
-            <BuildingLibraryIcon className="mx-auto h-12 w-12 text-pcc-navy" aria-hidden="true" />
-            <h2 className="mt-6 text-2xl font-bold text-pcc-navy">More Than a Church</h2>
-            <p className="mt-4 text-pcc-slate">
-              Our campus is home to several programs that serve the broader community — the PCC
-              Preschool, Peninsula Community Center, and School Age Child Care program.
-            </p>
-            <div className="mt-8 flex flex-col items-center gap-3">
-              {[
-                { name: 'PCC Preschool', href: 'https://www.peninsulacovenantpreschool.com/' },
-                { name: 'Peninsula Community Center', href: 'https://peninsulacommunitycenter.com/' },
-                { name: 'School Age Child Care', href: 'https://pccsacc.com/' },
-              ].map((program) => (
-                <a
-                  key={program.href}
-                  href={program.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${program.name} (opens in new tab)`}
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-pcc-navy hover:text-pcc-teal transition-colors"
-                >
-                  {program.name}
-                  <ArrowTopRightOnSquareIcon className="h-3.5 w-3.5 text-pcc-navy/40" aria-hidden="true" />
-                </a>
-              ))}
-            </div>
-            <p className="mt-8 text-sm text-pcc-slate/70">
-              Full content coming soon
-            </p>
+        <div className="mx-auto max-w-3xl px-4 pt-20 pb-10 text-center sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-pcc-navy">More Than a Church</h2>
+          <p className="mt-4 text-lg text-pcc-slate">
+            Our campus is home to several programs that serve the broader community.
+            Whether you attend PCC or not, these ministries are here for you and your family.
+          </p>
+        </div>
+      </section>
+
+      {/* Program Cards */}
+      <section className="bg-pcc-cream">
+        <div className="mx-auto max-w-5xl px-4 pb-20 sm:px-6 lg:px-8">
+          <div className="space-y-8">
+            {programs.map((program) => (
+              <div
+                key={program.href}
+                className="rounded-xl bg-white p-8 shadow-md sm:p-10"
+              >
+                <div className="flex items-start gap-5">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-pcc-navy/10 text-pcc-navy">
+                    <program.icon className="h-7 w-7" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-pcc-navy">{program.name}</h3>
+                    <p className="mt-2 text-pcc-slate leading-relaxed">{program.description}</p>
+                    <p className="mt-2 text-sm text-pcc-slate/70 leading-relaxed">{program.detail}</p>
+                    <a
+                      href={program.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Visit ${program.name} website (opens in new tab)`}
+                      className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-pcc-navy hover:text-pcc-teal transition-colors"
+                    >
+                      Visit Website
+                      <ArrowTopRightOnSquareIcon className="h-4 w-4" aria-hidden="true" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-          <Link
-            href="/about"
-            className="mt-8 inline-block text-sm font-medium text-pcc-navy hover:text-pcc-teal transition-colors"
-          >
-            &larr; Back to About
-          </Link>
+
+          <div className="mt-12 text-center">
+            <Link
+              href="/about"
+              className="text-sm font-medium text-pcc-navy hover:text-pcc-teal transition-colors"
+            >
+              &larr; Back to About
+            </Link>
+          </div>
         </div>
       </section>
     </>

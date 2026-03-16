@@ -15,7 +15,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { getCurrentAlphaSession } from '@/lib/db/queries'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Alpha | Peninsula Covenant Church',
@@ -48,7 +48,7 @@ export default async function AlphaPage() {
           </p>
           <a
             href="#register"
-            className="mt-8 inline-block rounded-lg bg-pcc-gold px-8 py-3 text-lg font-semibold text-pcc-navy shadow-lg hover:bg-pcc-gold-light transition-colors"
+            className="mt-8 inline-block rounded-lg bg-pcc-gold px-8 py-3 text-lg font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
           >
             {alphaSession ? 'Register Now' : 'Get Notified'}
           </a>
@@ -230,7 +230,7 @@ export default async function AlphaPage() {
                 </p>
                 <a
                   href="mailto:info@wearepcc.com?subject=Alpha%20Interest"
-                  className="mt-6 inline-block rounded-lg bg-pcc-emerald px-8 py-3 text-lg font-semibold text-white shadow-md hover:bg-pcc-emerald-light transition-colors"
+                  className="mt-6 inline-block rounded-lg bg-pcc-emerald px-8 py-3 text-lg font-semibold text-white hover:bg-pcc-emerald-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
                 >
                   Let Us Know You&apos;re Interested
                 </a>
@@ -335,7 +335,7 @@ export default async function AlphaPage() {
               </p>
               <a
                 href="#register"
-                className="mt-8 inline-block rounded-lg bg-pcc-gold px-10 py-4 text-lg font-bold text-pcc-navy shadow-lg hover:bg-pcc-gold-light transition-colors"
+                className="mt-8 inline-block rounded-lg bg-pcc-gold px-10 py-4 text-lg font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
               >
                 Register for Alpha
               </a>
@@ -347,7 +347,7 @@ export default async function AlphaPage() {
               </p>
               <a
                 href="#register"
-                className="mt-8 inline-block rounded-lg bg-pcc-gold px-10 py-4 text-lg font-bold text-pcc-navy shadow-lg hover:bg-pcc-gold-light transition-colors"
+                className="mt-8 inline-block rounded-lg bg-pcc-gold px-10 py-4 text-lg font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
               >
                 Get Notified
               </a>

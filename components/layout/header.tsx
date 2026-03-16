@@ -16,8 +16,7 @@ const dropdowns = {
     href: '/explore-faith',
     items: [
       { name: 'Alpha Program', href: '/explore-faith/alpha' },
-      { name: 'What We Believe', href: '/about/beliefs' },
-      { name: 'Questions About Christianity', href: '/explore-faith/faq' },
+      { name: 'Faith Questions', href: '/explore-faith/faith-questions' },
     ],
   },
   Connect: {
@@ -191,7 +190,7 @@ export function Header() {
         <button
           ref={menuButtonRef}
           type="button"
-          className={`md:hidden rounded-md p-1 ${focusRingDark}`}
+          className={`md:hidden flex h-11 w-11 items-center justify-center rounded-md ${focusRingDark}`}
           onClick={() => setMobileMenuOpen(true)}
           aria-label="Open menu"
           aria-expanded={mobileMenuOpen}
@@ -237,7 +236,7 @@ export function Header() {
               type="button"
               onClick={closeMobileMenu}
               aria-label="Close menu"
-              className={`rounded-md p-1 hover:bg-pcc-navy-light transition-colors ${focusRingDark}`}
+              className={`flex h-11 w-11 items-center justify-center rounded-md hover:bg-pcc-navy-light transition-colors ${focusRingDark}`}
             >
               <XMarkIcon className="h-6 w-6" aria-hidden="true" />
             </button>

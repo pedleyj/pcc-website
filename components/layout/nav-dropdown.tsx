@@ -112,7 +112,7 @@ export function NavDropdown({ label, href, items, mobile = false, onNavigate, is
             aria-haspopup="true"
             aria-controls={menuId}
             aria-label={`${open ? 'Collapse' : 'Expand'} ${label} menu`}
-            className={`rounded-md p-3 hover:bg-pcc-navy-light transition-colors ${focusRingDark}`}
+            className={`flex h-11 w-11 items-center justify-center rounded-md hover:bg-pcc-navy-light transition-colors ${focusRingDark}`}
           >
             <ChevronDownIcon
               className={`h-4 w-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
@@ -139,7 +139,7 @@ export function NavDropdown({ label, href, items, mobile = false, onNavigate, is
                   {...linkProps}
                   role="menuitem"
                   aria-label={external ? `${item.name} (opens in new tab)` : undefined}
-                  className={`flex items-center gap-1.5 rounded-md px-5 py-2 text-sm font-medium text-white/80 hover:bg-pcc-navy-light hover:text-white transition-colors ${focusRingDark}`}
+                  className={`flex items-center gap-1.5 rounded-md px-5 py-3 text-sm font-medium text-white/80 hover:bg-pcc-navy-light hover:text-white transition-colors ${focusRingDark}`}
                   onClick={() => {
                     setOpen(false)
                     onNavigate?.()

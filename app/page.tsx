@@ -6,7 +6,7 @@ import { CalendarDaysIcon, ClockIcon, MapPinIcon, UserGroupIcon, PlayCircleIcon,
 import { HeroCarousel } from '@/components/home/hero-carousel'
 import { getSiteSettings, getLatestMessages, getUpcomingEvents, getCurrentAlphaSession, getActiveMinistries } from '@/lib/db/queries'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Peninsula Covenant Church | Redwood City, CA',
@@ -32,8 +32,8 @@ export default async function Home() {
         <section id="alpha" className="border-t-4 border-pcc-emerald bg-pcc-emerald/10 scroll-mt-16">
           <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h2 className="text-3xl font-bold text-pcc-emerald sm:text-4xl md:text-5xl">
-                Discover Jesus Through Alpha
+              <h2 className="text-3xl font-bold text-pcc-navy sm:text-4xl md:text-5xl">
+                Explore Life&apos;s Big Questions
               </h2>
               <p className="mt-4 text-lg text-pcc-slate sm:text-xl">
                 Explore life&apos;s big questions in a welcoming community
@@ -94,7 +94,7 @@ export default async function Home() {
                   href={alphaSession.registrationUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block rounded-lg bg-pcc-emerald px-10 py-4 text-lg font-bold text-white shadow-md hover:bg-pcc-emerald-light transition-colors"
+                  className="inline-block rounded-lg bg-pcc-emerald px-10 py-4 text-lg font-semibold text-white hover:bg-pcc-emerald-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
                 >
                   Register for Alpha
                 </a>
@@ -137,7 +137,7 @@ export default async function Home() {
                     href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(siteSettings.address)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-pcc-gold px-6 py-3 text-lg font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-pcc-gold px-6 py-3 text-lg font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
                   >
                     <MapPinIcon className="h-5 w-5" />
                     Get Directions
@@ -148,7 +148,7 @@ export default async function Home() {
                       href={siteSettings.liveStreamUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-pcc-navy px-6 py-3 text-lg font-semibold text-pcc-navy hover:bg-pcc-navy hover:text-white transition-colors"
+                      className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-pcc-navy px-6 py-3 text-lg font-semibold text-pcc-navy hover:bg-pcc-navy hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
                     >
                       <PlayCircleIcon className="h-5 w-5" />
                       Watch Live
@@ -329,14 +329,14 @@ export default async function Home() {
                             href={event.registrationUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-block w-full rounded-lg bg-pcc-emerald px-5 py-2.5 text-center text-sm font-semibold text-white hover:bg-pcc-emerald-light transition-colors"
+                            className="inline-block w-full rounded-lg bg-pcc-emerald px-5 py-2.5 text-center text-sm font-semibold text-white hover:bg-pcc-emerald-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
                           >
                             Register
                           </a>
                         ) : (
                           <Link
                             href={`/events/${event.id}`}
-                            className="inline-block w-full rounded-lg border-2 border-pcc-navy px-5 py-2.5 text-center text-sm font-semibold text-pcc-navy hover:bg-pcc-navy hover:text-white transition-colors"
+                            className="inline-block w-full rounded-lg border-2 border-pcc-navy px-5 py-2.5 text-center text-sm font-semibold text-pcc-navy hover:bg-pcc-navy hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
                           >
                             Learn More
                           </Link>
@@ -423,7 +423,7 @@ export default async function Home() {
             <div className="mt-12 text-center">
               <Link
                 href="/connect/ministries"
-                className="inline-block rounded-lg bg-pcc-teal px-8 py-3 text-lg font-semibold text-white hover:bg-pcc-teal-light transition-colors"
+                className="inline-block rounded-lg bg-pcc-teal px-8 py-3 text-lg font-semibold text-white hover:bg-pcc-teal-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
               >
                 Explore All Ministries
               </Link>
@@ -447,14 +447,14 @@ export default async function Home() {
                 href={siteSettings.donationUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full rounded-lg bg-pcc-gold px-8 py-3 text-lg font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors sm:w-auto"
+                className="w-full rounded-lg bg-pcc-gold px-8 py-3 text-lg font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2 sm:w-auto"
               >
                 Give Online
               </a>
             )}
             <Link
               href="/give"
-              className="w-full rounded-lg border-2 border-pcc-navy px-8 py-3 text-lg font-semibold text-pcc-navy hover:bg-pcc-navy hover:text-white transition-colors sm:w-auto"
+              className="w-full rounded-lg border-2 border-pcc-navy px-8 py-3 text-lg font-semibold text-pcc-navy hover:bg-pcc-navy hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2 sm:w-auto"
             >
               Learn About Giving
             </Link>

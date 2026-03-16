@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import {
   SparklesIcon,
-  BookOpenIcon,
   ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/outline'
 
@@ -21,17 +20,10 @@ const cards = [
     icon: SparklesIcon,
   },
   {
-    title: 'What We Believe',
+    title: 'Questions About Faith',
     description:
-      'Learn about the core beliefs and values that guide our church community and shape everything we do.',
-    href: '/about/beliefs',
-    icon: BookOpenIcon,
-  },
-  {
-    title: 'Questions About Christianity',
-    description:
-      'Have questions? You\'re not alone. Explore honest answers to the questions people ask most.',
-    href: '/explore-faith/faq',
+      'Honest answers to the big questions about God, suffering, meaning, and more. A welcoming space for seekers and skeptics alike.',
+    href: '/explore-faith/faith-questions',
     icon: ChatBubbleLeftRightIcon,
   },
 ]
@@ -60,7 +52,7 @@ export default function ExploreFaithPage() {
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {cards.map((card) => (
               <Link
-                key={card.href}
+                key={card.title}
                 href={card.href}
                 className="group rounded-xl bg-white p-8 shadow-md transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
               >

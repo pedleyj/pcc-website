@@ -13,7 +13,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { getMessageById, getMessagesBySeries } from '@/lib/db/queries'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export async function generateMetadata({
   params,
@@ -215,7 +215,7 @@ export default async function MessageDetailPage({
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                    <h3 className="text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
                       {related.title}
                     </h3>
                     <p className="mt-1 text-sm text-pcc-charcoal">{related.speaker}</p>

@@ -12,7 +12,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { getAllSmallGroups } from '@/lib/db/queries'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 type SmallGroup = Awaited<ReturnType<typeof getAllSmallGroups>>[number]
 

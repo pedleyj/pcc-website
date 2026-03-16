@@ -23,8 +23,8 @@ export function Logo({ variant = 'light', size = 'sm' }: LogoProps) {
         priority
       />
       <span
-        className={`font-bold tracking-wide ${variant === 'light' ? 'text-white' : 'text-pcc-navy'} ${
-          size === 'sm' ? 'text-xl' : size === 'md' ? 'text-2xl' : 'text-3xl'
+        className={`font-light tracking-widest ${variant === 'light' ? 'text-white' : 'text-pcc-navy'} ${
+          size === 'sm' ? 'text-2xl' : size === 'md' ? 'text-3xl' : 'text-4xl'
         }`}
         style={{ fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }}
       >

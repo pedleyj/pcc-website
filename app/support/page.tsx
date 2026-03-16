@@ -11,7 +11,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { getAllSupportResources } from '@/lib/db/queries'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 type SupportResource = Awaited<ReturnType<typeof getAllSupportResources>>[number]
 
@@ -71,7 +71,7 @@ export default async function SupportPage() {
                 <HandRaisedIcon className="h-7 w-7" aria-hidden="true" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-pcc-navy group-hover:text-pcc-forest transition-colors">
+                <h2 className="text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
                   Prayer Requests
                 </h2>
                 <p className="mt-1 text-sm text-pcc-slate">

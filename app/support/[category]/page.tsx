@@ -15,7 +15,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { getSupportResourcesByCategory, getAllSupportResources } from '@/lib/db/queries'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 type SupportResource = Awaited<ReturnType<typeof getAllSupportResources>>[number]
 
@@ -300,7 +300,7 @@ export default async function SupportResourcePage({
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-pcc-sage/20 text-pcc-forest">
                       <OtherIcon className="h-6 w-6" aria-hidden="true" />
                     </div>
-                    <h3 className="mt-4 font-bold text-pcc-navy group-hover:text-pcc-forest transition-colors">
+                    <h3 className="mt-4 text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
                       {r.title}
                     </h3>
                     <p className="mt-2 flex-grow text-sm text-pcc-slate line-clamp-2">
