@@ -122,9 +122,12 @@ model SmallGroup {
   description     String   @db.Text
   leader          String
   leaderEmail     String?
+  leaderBio       String?  @db.Text
   meetingDay      String?
   meetingTime     String?
   location        String?
+  locationType    String?  // "oncampus", "offcampus", "online"
+  ageGroup        String?  // "adults", "young_adults", "seniors", "mixed"
   imageUrl        String?
   capacity        Int?
   currentMembers  Int      @default(0)
