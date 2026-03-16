@@ -131,6 +131,112 @@ async function main() {
     },
   })
 
+  await prisma.event.create({
+    data: {
+      title: 'Sunday Worship Service',
+      description: 'Join us for worship, teaching, and community. All are welcome! Services at 9:00 AM and 10:45 AM.',
+      startDate: new Date('2026-03-22'),
+      startTime: '9:00 AM',
+      endTime: '12:00 PM',
+      location: 'PCC Sanctuary',
+      category: 'worship',
+      recurring: true,
+      recurrenceRule: 'weekly',
+    },
+  })
+
+  await prisma.event.create({
+    data: {
+      title: 'Youth Group Night',
+      description: 'Middle and high school students gather for games, worship, and small group discussions. Bring a friend!',
+      startDate: new Date('2026-03-25'),
+      startTime: '6:30 PM',
+      endTime: '8:30 PM',
+      location: 'PCC Youth Room',
+      category: 'youth',
+      recurring: true,
+      recurrenceRule: 'weekly',
+    },
+  })
+
+  await prisma.event.create({
+    data: {
+      title: 'Community Meal & Prayer Night',
+      description: 'Share a meal together and spend time in prayer for our community, our nation, and the world. Everyone is welcome — no reservation needed.',
+      startDate: new Date('2026-04-01'),
+      startTime: '6:00 PM',
+      endTime: '8:00 PM',
+      location: 'PCC Fellowship Hall',
+      category: 'community',
+    },
+  })
+
+  await prisma.event.create({
+    data: {
+      title: 'Men\'s Breakfast',
+      description: 'Join us for a hearty breakfast and meaningful conversation. This month\'s topic: "Leading with Purpose." All men welcome.',
+      startDate: new Date('2026-04-04'),
+      startTime: '8:00 AM',
+      endTime: '9:30 AM',
+      location: 'PCC Community Center',
+      category: 'ministry',
+    },
+  })
+
+  await prisma.event.create({
+    data: {
+      title: 'Neighborhood Outreach Day',
+      description: 'Serve our neighbors through yard work, food distribution, and community connection. Meet at the church parking lot at 9 AM.',
+      startDate: new Date('2026-04-11'),
+      startTime: '9:00 AM',
+      endTime: '1:00 PM',
+      location: 'PCC Campus & Surrounding Neighborhood',
+      category: 'outreach',
+      registrationOpen: true,
+      registrationUrl: 'https://wearepcc.churchcenter.com/registrations/events',
+    },
+  })
+
+  await prisma.event.create({
+    data: {
+      title: 'Kids Worship Night',
+      description: 'A special evening of worship, Bible stories, and crafts designed just for kids ages 4-10. Parents are welcome to stay or enjoy a date night!',
+      startDate: new Date('2026-04-18'),
+      startTime: '5:30 PM',
+      endTime: '7:30 PM',
+      location: 'PCC Kids Wing',
+      category: 'kids',
+      registrationOpen: true,
+      registrationUrl: 'https://wearepcc.churchcenter.com/registrations/events',
+    },
+  })
+
+  await prisma.event.create({
+    data: {
+      title: 'Good Friday Service',
+      description: 'A reflective service of Scripture, music, and communion as we remember the sacrifice of Jesus. Childcare available for ages 0-5.',
+      startDate: new Date('2026-04-03'),
+      startTime: '7:00 PM',
+      endTime: '8:30 PM',
+      location: 'PCC Sanctuary',
+      category: 'worship',
+      featured: true,
+    },
+  })
+
+  await prisma.event.create({
+    data: {
+      title: 'Easter Sunday Celebration',
+      description: 'Celebrate the resurrection of Jesus with us! Special music, an Easter message, and activities for kids. Invite your friends and family — everyone is welcome.',
+      startDate: new Date('2026-04-05'),
+      startTime: '9:00 AM',
+      endTime: '12:00 PM',
+      location: 'PCC Sanctuary & Campus',
+      category: 'worship',
+      featured: true,
+    },
+  })
+
   // Ministries
   const ministries = [
     {

@@ -67,6 +67,28 @@ export async function getUpcomingEvents(limit = 3) {
   })
 }
 
+export async function getAllEvents(options?: { category?: string }) {
+  return prisma.event.findMany({
+    where: {
+      ...(options?.category ? { category: options.category } : {}),
+    },
+    orderBy: { startDate: 'asc' },
+  })
+}
+
+export async function getEventById(id: string) {
+  return prisma.event.findUnique({ where: { id } })
+}
+
+export async function getDistinctEventCategories() {
+  const results = await prisma.event.findMany({
+    select: { category: true },
+    distinct: ['category'],
+    orderBy: { category: 'asc' },
+  })
+  return results.map((r) => r.category)
+}
+
 export async function getCurrentAlphaSession() {
   const fourWeeksAgo = new Date()
   fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28)

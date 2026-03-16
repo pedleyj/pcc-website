@@ -1,13 +1,31 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { CalendarDaysIcon } from '@heroicons/react/24/outline'
+import { getAllEvents, getDistinctEventCategories } from '@/lib/db/queries'
+import { CalendarView } from '@/components/events/calendar-view'
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Events Calendar | Peninsula Covenant Church',
   description: 'Stay up to date with worship services, special events, and community gatherings at PCC.',
 }
 
-export default function EventsPage() {
+export default async function EventsPage() {
+  const [events, categories] = await Promise.all([
+    getAllEvents(),
+    getDistinctEventCategories(),
+  ])
+
+  // Serialize dates for client component
+  const serialized = events.map((e) => ({
+    ...e,
+    startDate: e.startDate.toISOString(),
+    endDate: e.endDate?.toISOString() ?? null,
+    createdAt: e.createdAt.toISOString(),
+    updatedAt: e.updatedAt.toISOString(),
+  }))
+
   return (
     <>
       {/* Hero */}
@@ -26,29 +44,23 @@ export default function EventsPage() {
         </div>
       </section>
 
-      {/* Calendar Embed */}
-      <section className="bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-          <iframe
-            src="https://wearepcc.churchcenter.com/calendar?embed=true&view=list"
-            width="100%"
-            style={{ border: 0, minHeight: '800px' }}
-            title="PCC Events Calendar"
-            loading="lazy"
-          />
+      {/* Calendar */}
+      <section className="bg-pcc-cream">
+        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+          <CalendarView events={serialized} categories={categories} />
         </div>
       </section>
 
       {/* Bottom CTA */}
-      <section className="bg-pcc-cream">
+      <section className="bg-pcc-navy">
         <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-pcc-navy">Want to Stay Connected?</h2>
-          <p className="mt-3 text-pcc-slate">
+          <h2 className="text-2xl font-bold text-white">Want to Stay Connected?</h2>
+          <p className="mt-3 text-white/80">
             Subscribe to our newsletter for weekly updates, event announcements, and encouragement.
           </p>
           <Link
             href="/about/newsletter"
-            className="mt-6 inline-block rounded-lg bg-pcc-navy px-6 py-3 text-sm font-semibold text-white hover:bg-pcc-navy/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+            className="mt-6 inline-block rounded-lg bg-pcc-gold px-6 py-3 text-sm font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
           >
             Subscribe to Newsletter
           </Link>

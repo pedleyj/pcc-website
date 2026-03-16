@@ -50,6 +50,7 @@ model Message {
 
 model Event {
   id                String   @id @default(cuid())
+  pcInstanceId      String?  @unique // Planning Center event instance ID for sync
   title             String
   description       String   @db.Text
   startDate         DateTime
@@ -64,6 +65,7 @@ model Event {
   featured          Boolean  @default(false)
   recurring         Boolean  @default(false)
   recurrenceRule    String?  // "weekly", "monthly", etc.
+  churchCenterUrl   String?  // Link to event on Church Center
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
