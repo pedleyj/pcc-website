@@ -8,7 +8,7 @@ const securityHeaders = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https://placehold.co https://wearepcc.com https://*.googleusercontent.com https://images.planningcenterusercontent.com",
+      "img-src 'self' data: blob: https://placehold.co https://wearepcc.com https://*.googleusercontent.com https://images.planningcenterusercontent.com https://s3.amazonaws.com",
       "font-src 'self'",
       "frame-src https://www.google.com https://www.youtube.com https://*.churchcenter.com",
       "connect-src 'self'",
@@ -99,6 +99,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "images.planningcenterusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "s3.amazonaws.com",
       },
     ],
     dangerouslyAllowSVG: true,

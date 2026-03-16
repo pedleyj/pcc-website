@@ -28,24 +28,40 @@ model AlphaSession {
 }
 
 model Message {
-  id          String   @id @default(cuid())
+  id          String             @id @default(cuid())
   title       String
   speaker     String
   date        DateTime
   series      String?
   scripture   String?
-  description String?  @db.Text
+  description String?            @db.Text
   videoUrl    String?
   audioUrl    String?
   resourceUrl String?
   thumbnail   String?
   tags        String[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  resources   MessageResource[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 
   @@index([date])
   @@index([series])
   @@index([speaker])
+}
+
+model MessageResource {
+  id          String   @id @default(cuid())
+  messageId   String
+  message     Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  type        String   // "beyond_sunday", "discussion_guide", "sermon_notes", "scripture_ref", "other"
+  title       String
+  description String?
+  fileUrl     String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([messageId])
 }
 
 model Event {

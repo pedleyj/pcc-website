@@ -6,6 +6,7 @@ async function main() {
   console.log('Starting seed...')
 
   // Clear existing data
+  await prisma.messageResource.deleteMany()
   await prisma.staffMember.deleteMany()
   await prisma.smallGroup.deleteMany()
   await prisma.supportResource.deleteMany()
@@ -97,8 +98,85 @@ async function main() {
     },
   ]
 
+  const createdMessages: Record<string, string> = {}
   for (const message of messages) {
-    await prisma.message.create({ data: message })
+    const created = await prisma.message.create({ data: message })
+    createdMessages[message.title] = created.id
+  }
+
+  // Message Resources
+  await prisma.messageResource.deleteMany()
+
+  const msg1Id = createdMessages["God's Heart for the World"]
+  const msg2Id = createdMessages["Don't be Fooled"]
+  const msg3Id = createdMessages["The Thermostat (Who is King)"]
+
+  if (msg1Id) {
+    await prisma.messageResource.createMany({
+      data: [
+        {
+          messageId: msg1Id,
+          type: 'beyond_sunday',
+          title: 'Beyond Sunday: God\'s Global Mission',
+          description: 'Reflection questions for personal study or small group discussion',
+          fileUrl: '/resources/beyond-sunday-feb-8-2026.pdf',
+          order: 1,
+        },
+        {
+          messageId: msg1Id,
+          type: 'discussion_guide',
+          title: 'Small Group Discussion Guide',
+          description: 'Questions to dive deeper into this week\'s message',
+          fileUrl: '/resources/discussion-guide-feb-8-2026.pdf',
+          order: 2,
+        },
+        {
+          messageId: msg1Id,
+          type: 'scripture_ref',
+          title: 'Scripture Reading: Matthew 28:18-20',
+          description: 'The Great Commission in context',
+          fileUrl: '/resources/scripture-matthew-28.pdf',
+          order: 3,
+        },
+      ],
+    })
+  }
+
+  if (msg2Id) {
+    await prisma.messageResource.createMany({
+      data: [
+        {
+          messageId: msg2Id,
+          type: 'beyond_sunday',
+          title: 'Beyond Sunday: Discernment in Daily Life',
+          description: 'How to apply this week\'s message to everyday decisions',
+          fileUrl: '/resources/beyond-sunday-feb-1-2026.pdf',
+          order: 1,
+        },
+        {
+          messageId: msg2Id,
+          type: 'sermon_notes',
+          title: 'Sermon Notes: Don\'t be Fooled',
+          description: 'Fill-in-the-blank notes to follow along on Sunday',
+          fileUrl: '/resources/sermon-notes-feb-1-2026.pdf',
+          order: 2,
+        },
+      ],
+    })
+  }
+
+  if (msg3Id) {
+    await prisma.messageResource.createMany({
+      data: [
+        {
+          messageId: msg3Id,
+          type: 'beyond_sunday',
+          title: 'Beyond Sunday: Salt and Light',
+          fileUrl: '/resources/beyond-sunday-jan-25-2026.pdf',
+          order: 1,
+        },
+      ],
+    })
   }
 
   // Events

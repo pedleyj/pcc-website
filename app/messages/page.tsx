@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { format } from 'date-fns'
-import { BookOpenIcon, FunnelIcon } from '@heroicons/react/24/outline'
+import { BookOpenIcon, FunnelIcon, DocumentTextIcon } from '@heroicons/react/24/outline'
 import { getAllMessages, getDistinctSeries, getDistinctSpeakers } from '@/lib/db/queries'
 import { FilterSelect } from '@/components/messages/filter-select'
 
@@ -118,6 +118,12 @@ export default async function MessagesPage({
                       <div className="mt-2 flex items-center gap-1 text-xs text-pcc-teal">
                         <BookOpenIcon className="h-3.5 w-3.5" />
                         <span>{message.scripture}</span>
+                      </div>
+                    )}
+                    {message._count.resources > 0 && (
+                      <div className="mt-2 flex items-center gap-1 text-xs text-pcc-forest">
+                        <DocumentTextIcon className="h-3.5 w-3.5" />
+                        <span>{message._count.resources} resource{message._count.resources !== 1 ? 's' : ''} available</span>
                       </div>
                     )}
                   </div>

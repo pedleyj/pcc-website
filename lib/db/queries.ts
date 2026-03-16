@@ -12,7 +12,10 @@ export async function getLatestMessages(limit = 4) {
 }
 
 export async function getMessageById(id: string) {
-  return prisma.message.findUnique({ where: { id } })
+  return prisma.message.findUnique({
+    where: { id },
+    include: { resources: { orderBy: { order: 'asc' } } },
+  })
 }
 
 export async function getAllMessages(options?: { series?: string; speaker?: string }) {
@@ -21,6 +24,7 @@ export async function getAllMessages(options?: { series?: string; speaker?: stri
       ...(options?.series ? { series: options.series } : {}),
       ...(options?.speaker ? { speaker: options.speaker } : {}),
     },
+    include: { _count: { select: { resources: true } } },
     orderBy: { date: 'desc' },
   })
 }

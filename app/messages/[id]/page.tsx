@@ -10,6 +10,10 @@ import {
   UserIcon,
   ArrowDownTrayIcon,
   PlayCircleIcon,
+  DocumentTextIcon,
+  DocumentArrowDownIcon,
+  SparklesIcon,
+  ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/outline'
 import { getMessageById, getMessagesBySeries } from '@/lib/db/queries'
 
@@ -161,8 +165,57 @@ export default async function MessageDetailPage({
             </div>
           )}
 
-          {/* Resource Download */}
-          {message.resourceUrl && (
+          {/* Study Resources */}
+          {message.resources && message.resources.length > 0 && (
+            <div className="mt-6 rounded-xl bg-white p-6 shadow-md sm:p-8">
+              <h2 className="text-xl font-bold text-pcc-navy">Study Resources</h2>
+              <p className="mt-1 text-sm text-pcc-slate">
+                Continue learning with these resources for personal reflection or group discussion.
+              </p>
+              <div className="mt-6 space-y-3">
+                {message.resources.map((resource) => {
+                  const typeConfig: Record<string, { label: string; icon: typeof DocumentTextIcon; color: string }> = {
+                    beyond_sunday: { label: 'Beyond Sunday', icon: SparklesIcon, color: 'bg-pcc-emerald/10 text-pcc-emerald' },
+                    discussion_guide: { label: 'Discussion Guide', icon: ChatBubbleLeftRightIcon, color: 'bg-pcc-teal/10 text-pcc-teal' },
+                    sermon_notes: { label: 'Sermon Notes', icon: DocumentTextIcon, color: 'bg-pcc-navy/10 text-pcc-navy' },
+                    scripture_ref: { label: 'Scripture', icon: BookOpenIcon, color: 'bg-pcc-gold/15 text-pcc-gold-dark' },
+                    other: { label: 'Resource', icon: DocumentArrowDownIcon, color: 'bg-pcc-slate/10 text-pcc-slate' },
+                  }
+                  const config = typeConfig[resource.type] || typeConfig.other
+                  const TypeIcon = config.icon
+
+                  return (
+                    <a
+                      key={resource.id}
+                      href={resource.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center gap-4 rounded-lg border border-pcc-cream-dark p-4 transition-colors hover:bg-pcc-cream-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+                    >
+                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${config.color}`}>
+                        <TypeIcon className="h-5 w-5" aria-hidden="true" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                          {resource.title}
+                        </p>
+                        {resource.description && (
+                          <p className="mt-0.5 text-sm text-pcc-slate truncate">{resource.description}</p>
+                        )}
+                        <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${config.color}`}>
+                          {config.label}
+                        </span>
+                      </div>
+                      <ArrowDownTrayIcon className="h-5 w-5 shrink-0 text-pcc-slate group-hover:text-pcc-teal transition-colors" aria-hidden="true" />
+                    </a>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Legacy single resource (for messages with only resourceUrl) */}
+          {message.resourceUrl && (!message.resources || message.resources.length === 0) && (
             <div className="mt-6 rounded-xl bg-white p-6 shadow-md">
               <a
                 href={message.resourceUrl}
