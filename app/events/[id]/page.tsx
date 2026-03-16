@@ -228,7 +228,19 @@ export default async function EventDetailPage({
                     rel="noopener noreferrer"
                     className="flex w-full items-center justify-center gap-2 rounded-lg bg-pcc-emerald px-6 py-3 text-sm font-semibold text-white hover:bg-pcc-emerald-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
                   >
-                    Register on Church Center
+                    Register Now
+                    <ArrowTopRightOnSquareIcon className="h-4 w-4" aria-hidden="true" />
+                  </a>
+                )}
+
+                {event.churchCenterUrl && (
+                  <a
+                    href={event.churchCenterUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-pcc-navy px-6 py-3 text-sm font-semibold text-pcc-navy hover:bg-pcc-navy hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+                  >
+                    View on Church Center
                     <ArrowTopRightOnSquareIcon className="h-4 w-4" aria-hidden="true" />
                   </a>
                 )}
