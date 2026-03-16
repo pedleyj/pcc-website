@@ -5,11 +5,8 @@ import {
   SparklesIcon,
   HeartIcon,
   EnvelopeIcon,
+  ArrowTopRightOnSquareIcon,
 } from '@heroicons/react/24/outline'
-import { getAllSmallGroups } from '@/lib/db/queries'
-import { GroupsBrowser } from '@/components/groups/groups-browser'
-
-export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Small Groups | Peninsula Covenant Church',
@@ -17,15 +14,7 @@ export const metadata: Metadata = {
     'Find a small group at Peninsula Covenant Church. Growth Groups and Life Groups meeting throughout the week.',
 }
 
-export default async function GroupsPage() {
-  const allGroups = await getAllSmallGroups()
-
-  const serialized = allGroups.map((g) => ({
-    ...g,
-    createdAt: g.createdAt.toISOString(),
-    updatedAt: g.updatedAt.toISOString(),
-  }))
-
+export default function GroupsPage() {
   return (
     <>
       {/* Hero */}
@@ -43,44 +32,134 @@ export default async function GroupsPage() {
         </div>
       </section>
 
-      {/* Group Type Explainers */}
+      {/* Group Types */}
       <section className="bg-pcc-cream">
-        <div className="mx-auto max-w-5xl px-4 pt-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="grid gap-8 md:grid-cols-2">
-            <div className="rounded-xl bg-white p-8 shadow-md">
+            {/* Growth Groups */}
+            <div className="flex flex-col rounded-xl bg-white p-8 shadow-md sm:p-10">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-pcc-teal/15 text-pcc-teal">
-                  <SparklesIcon className="h-6 w-6" aria-hidden="true" />
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pcc-teal/15 text-pcc-teal">
+                  <SparklesIcon className="h-7 w-7" aria-hidden="true" />
                 </div>
-                <h2 className="text-xl font-bold text-pcc-navy">Growth Groups</h2>
+                <h2 className="text-2xl font-bold text-pcc-navy">Growth Groups</h2>
               </div>
-              <p className="mt-4 text-sm text-pcc-slate leading-relaxed">
-                Focused on studying God&apos;s Word together, encouraging spiritual growth through
-                Scripture-based discussion and prayer. Short-term commitments (6–8 weeks) with new
-                sessions starting throughout the year.
+              <p className="mt-5 text-pcc-slate leading-relaxed">
+                Short-term groups designed to help you grow closer to Jesus and build deeper
+                connections at PCC. Growth Groups run during Lent and fall seasons, typically
+                meeting for 6–8 weeks around a specific study or topic.
               </p>
+              <ul className="mt-5 space-y-2.5 text-sm text-pcc-slate">
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-pcc-teal" aria-hidden="true" />
+                  Short-term commitment (6–8 weeks)
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-pcc-teal" aria-hidden="true" />
+                  Topical studies (Lent, book studies, and more)
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-pcc-teal" aria-hidden="true" />
+                  Great for exploring specific topics
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-pcc-teal" aria-hidden="true" />
+                  New sessions start throughout the year
+                </li>
+              </ul>
+              <div className="mt-auto pt-8">
+                <a
+                  href="https://wearepcc.churchcenter.com/groups/growth-groups?enrollment=open_signup%2Crequest_to_join&filter=enrollment"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-pcc-teal px-6 py-3 text-sm font-semibold text-white hover:bg-pcc-teal-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+                >
+                  Browse Growth Groups
+                  <ArrowTopRightOnSquareIcon className="h-4 w-4" aria-hidden="true" />
+                </a>
+              </div>
             </div>
 
-            <div className="rounded-xl bg-white p-8 shadow-md">
+            {/* Life Groups */}
+            <div className="flex flex-col rounded-xl bg-white p-8 shadow-md sm:p-10">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-pcc-gold/20 text-pcc-gold-dark">
-                  <HeartIcon className="h-6 w-6" aria-hidden="true" />
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pcc-gold/20 text-pcc-gold-dark">
+                  <HeartIcon className="h-7 w-7" aria-hidden="true" />
                 </div>
-                <h2 className="text-xl font-bold text-pcc-navy">Life Groups</h2>
+                <h2 className="text-2xl font-bold text-pcc-navy">Life Groups</h2>
               </div>
-              <p className="mt-4 text-sm text-pcc-slate leading-relaxed">
-                Community-focused gatherings where people build authentic friendships, share life
-                together, and support one another. Ongoing groups for every season of life.
+              <p className="mt-5 text-pcc-slate leading-relaxed">
+                Long-term, on-going small groups designed to help you grow closer to Jesus and
+                build deeper connections at PCC. Life Groups continue throughout the year, meeting
+                weekly to share life, study Scripture, and support one another.
               </p>
+              <ul className="mt-5 space-y-2.5 text-sm text-pcc-slate">
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-pcc-gold" aria-hidden="true" />
+                  Ongoing community year-round
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-pcc-gold" aria-hidden="true" />
+                  Build deeper, lasting relationships
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-pcc-gold" aria-hidden="true" />
+                  Various life stages and interests
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-pcc-gold" aria-hidden="true" />
+                  Weekly meetings with authentic conversation
+                </li>
+              </ul>
+              <div className="mt-auto pt-8">
+                <a
+                  href="https://wearepcc.churchcenter.com/groups/life-groups?enrollment=open_signup%2Crequest_to_join&filter=enrollment"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-pcc-gold px-6 py-3 text-sm font-semibold text-pcc-navy hover:bg-pcc-gold-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
+                >
+                  Browse Life Groups
+                  <ArrowTopRightOnSquareIcon className="h-4 w-4" aria-hidden="true" />
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Groups Browser */}
-      <section className="bg-pcc-cream">
-        <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
-          <GroupsBrowser groups={serialized} />
+      {/* How It Works */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
+          <h2 className="text-center text-2xl font-bold text-pcc-navy">How Small Groups Work</h2>
+          <div className="mt-10 grid gap-8 sm:grid-cols-3">
+            <div className="text-center">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-pcc-navy/10 text-pcc-navy text-xl font-bold">
+                1
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-pcc-navy">Browse</h3>
+              <p className="mt-2 text-sm text-pcc-slate">
+                Look through available groups above. Each listing shows the topic, meeting time, and location.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-pcc-navy/10 text-pcc-navy text-xl font-bold">
+                2
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-pcc-navy">Sign Up</h3>
+              <p className="mt-2 text-sm text-pcc-slate">
+                Found one that interests you? Click the button to sign up through Church Center. It&apos;s quick and easy.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-pcc-navy/10 text-pcc-navy text-xl font-bold">
+                3
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-pcc-navy">Show Up</h3>
+              <p className="mt-2 text-sm text-pcc-slate">
+                That&apos;s it! Come as you are. Your group leader will welcome you and help you get settled.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
