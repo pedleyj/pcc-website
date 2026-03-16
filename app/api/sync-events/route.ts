@@ -34,10 +34,20 @@ export async function GET(request: Request) {
 
   const isVercelCron = CRON_SECRET && cronHeader === CRON_SECRET
   const isManualTrigger = SYNC_SECRET && querySecret === SYNC_SECRET
-  const noAuthConfigured = !CRON_SECRET && !SYNC_SECRET
 
-  if (!isVercelCron && !isManualTrigger && !noAuthConfigured) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (CRON_SECRET || SYNC_SECRET) {
+    if (!isVercelCron && !isManualTrigger) {
+      return NextResponse.json({
+        error: 'Unauthorized',
+        debug: {
+          hasCronSecret: !!CRON_SECRET,
+          hasSyncSecret: !!SYNC_SECRET,
+          syncSecretLen: SYNC_SECRET.length,
+          querySecretLen: querySecret?.length ?? 0,
+          match: querySecret === SYNC_SECRET,
+        },
+      }, { status: 401 })
+    }
   }
 
   try {
