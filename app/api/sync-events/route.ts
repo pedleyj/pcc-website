@@ -37,16 +37,7 @@ export async function GET(request: Request) {
 
   if (CRON_SECRET || SYNC_SECRET) {
     if (!isVercelCron && !isManualTrigger) {
-      return NextResponse.json({
-        error: 'Unauthorized',
-        debug: {
-          hasCronSecret: !!CRON_SECRET,
-          hasSyncSecret: !!SYNC_SECRET,
-          syncSecretLen: SYNC_SECRET.length,
-          querySecretLen: querySecret?.length ?? 0,
-          match: querySecret === SYNC_SECRET,
-        },
-      }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
   }
 
