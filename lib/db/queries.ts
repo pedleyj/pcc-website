@@ -181,3 +181,17 @@ export async function createPrayerRequest(data: {
 }) {
   return prisma.prayerRequest.create({ data })
 }
+
+export async function getPublicPrayerRequests(limit = 15) {
+  return prisma.prayerRequest.findMany({
+    where: { isPublic: true },
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+    select: {
+      id: true,
+      name: true,
+      request: true,
+      createdAt: true,
+    },
+  })
+}

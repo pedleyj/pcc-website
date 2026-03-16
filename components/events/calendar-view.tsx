@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, getDay, addMonths, subMonths, isPast, startOfDay } from 'date-fns'
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, getDay, addMonths, subMonths } from 'date-fns'
 import {
   CalendarDaysIcon,
   ListBulletIcon,
@@ -57,12 +57,11 @@ function capitalize(s: string) {
 function EventCard({ event }: { event: Event }) {
   const start = new Date(event.startDate)
   const style = getCategoryStyle(event.category)
-  const past = isPast(event.endDate ? new Date(event.endDate) : start)
 
   return (
     <Link
       href={`/events/${event.id}`}
-      className={`group flex gap-4 rounded-xl bg-white p-4 shadow-md transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2 sm:p-5 ${past ? 'opacity-60' : ''}`}
+      className="group flex gap-4 rounded-xl bg-white p-4 shadow-md transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2 sm:p-5"
     >
       {/* Date block */}
       <div className="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-lg bg-pcc-cream text-center sm:h-20 sm:w-20">
@@ -85,11 +84,6 @@ function EventCard({ event }: { event: Event }) {
           {event.registrationOpen && (
             <span className="inline-block rounded-full bg-pcc-emerald/10 px-2.5 py-0.5 text-xs font-semibold text-pcc-emerald">
               Registration Open
-            </span>
-          )}
-          {past && (
-            <span className="inline-block rounded-full bg-pcc-slate/10 px-2.5 py-0.5 text-xs font-semibold text-pcc-slate">
-              Past
             </span>
           )}
         </div>
@@ -144,6 +138,7 @@ function MonthView({ events, currentMonth, onPrev, onNext }: {
   const monthEnd = endOfMonth(currentMonth)
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd })
   const startPad = getDay(monthStart)
+  const monthLabel = format(currentMonth, 'MMMM yyyy')
 
   return (
     <div>
@@ -151,77 +146,82 @@ function MonthView({ events, currentMonth, onPrev, onNext }: {
         <button
           type="button"
           onClick={onPrev}
-          className="flex h-10 w-10 items-center justify-center rounded-lg hover:bg-pcc-cream transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal"
+          className="flex h-11 w-11 items-center justify-center rounded-lg hover:bg-pcc-cream transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal"
           aria-label="Previous month"
         >
           <ChevronLeftIcon className="h-5 w-5 text-pcc-navy" />
         </button>
-        <h3 className="text-xl font-bold text-pcc-navy">
-          {format(currentMonth, 'MMMM yyyy')}
+        <h3 className="text-xl font-bold text-pcc-navy" aria-live="polite">
+          {monthLabel}
         </h3>
         <button
           type="button"
           onClick={onNext}
-          className="flex h-10 w-10 items-center justify-center rounded-lg hover:bg-pcc-cream transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal"
+          className="flex h-11 w-11 items-center justify-center rounded-lg hover:bg-pcc-cream transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal"
           aria-label="Next month"
         >
           <ChevronRightIcon className="h-5 w-5 text-pcc-navy" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 text-center text-xs font-semibold text-pcc-slate mb-2">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-          <div key={d} className="py-2">{d}</div>
-        ))}
-      </div>
+      <div role="grid" aria-label={`Calendar for ${monthLabel}`}>
+        <div role="row" className="grid grid-cols-7 text-center text-xs font-semibold text-pcc-slate mb-2">
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
+            <div key={d} role="columnheader" className="py-2">{d}</div>
+          ))}
+        </div>
 
-      <div className="grid grid-cols-7 gap-px bg-pcc-cream-dark rounded-lg overflow-hidden">
-        {Array.from({ length: startPad }).map((_, i) => (
-          <div key={`pad-${i}`} className="min-h-[80px] bg-pcc-cream-light/50 p-1 sm:min-h-[100px]" />
-        ))}
+        <div className="grid grid-cols-7 gap-px bg-pcc-cream-dark rounded-lg overflow-hidden">
+          {Array.from({ length: startPad }).map((_, i) => (
+            <div key={`pad-${i}`} role="gridcell" className="min-h-[80px] bg-pcc-cream-light/50 p-1 sm:min-h-[100px]" />
+          ))}
 
-        {days.map((day) => {
-          const dayEvents = events.filter((e) => {
-            const start = new Date(e.startDate)
-            const end = e.endDate ? new Date(e.endDate) : start
-            return day >= new Date(start.toDateString()) && day <= new Date(end.toDateString())
-          })
-          const isToday = isSameDay(day, new Date())
+          {days.map((day) => {
+            const dayEvents = events.filter((e) => {
+              const start = new Date(e.startDate)
+              const end = e.endDate ? new Date(e.endDate) : start
+              return day >= new Date(start.toDateString()) && day <= new Date(end.toDateString())
+            })
+            const isToday = isSameDay(day, new Date())
+            const dayLabel = `${format(day, 'EEEE, MMMM d')}${dayEvents.length > 0 ? `, ${dayEvents.length} event${dayEvents.length > 1 ? 's' : ''}` : ''}`
 
-          return (
-            <div
-              key={day.toISOString()}
-              className={`min-h-[80px] p-1 sm:min-h-[100px] sm:p-2 ${
-                isSameMonth(day, currentMonth) ? 'bg-white' : 'bg-pcc-cream-light/50'
-              }`}
-            >
-              <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
-                isToday ? 'bg-pcc-navy text-white' : 'text-pcc-charcoal'
-              }`}>
-                {format(day, 'd')}
-              </span>
-              <div className="mt-0.5 space-y-0.5">
-                {dayEvents.slice(0, 3).map((event) => {
-                  const style = getCategoryStyle(event.category)
-                  return (
-                    <Link
-                      key={event.id}
-                      href={`/events/${event.id}`}
-                      className={`block truncate rounded px-1 py-0.5 text-[10px] font-medium leading-tight sm:text-xs ${style.bg} ${style.text} hover:opacity-80 transition-opacity`}
-                      title={event.title}
-                    >
-                      <span className="hidden sm:inline">{event.title}</span>
-                      <span className={`inline h-1.5 w-1.5 rounded-full sm:hidden ${style.dot}`} />
-                    </Link>
-                  )
-                })}
-                {dayEvents.length > 3 && (
-                  <span className="block text-[10px] text-pcc-slate">+{dayEvents.length - 3} more</span>
-                )}
+            return (
+              <div
+                key={day.toISOString()}
+                role="gridcell"
+                aria-label={dayLabel}
+                className={`min-h-[80px] p-1 sm:min-h-[100px] sm:p-2 ${
+                  isSameMonth(day, currentMonth) ? 'bg-white' : 'bg-pcc-cream-light/50'
+                }`}
+              >
+                <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
+                  isToday ? 'bg-pcc-navy text-white' : 'text-pcc-charcoal'
+                }`}>
+                  {format(day, 'd')}
+                </span>
+                <div className="mt-0.5 space-y-0.5">
+                  {dayEvents.slice(0, 3).map((event) => {
+                    const style = getCategoryStyle(event.category)
+                    return (
+                      <Link
+                        key={event.id}
+                        href={`/events/${event.id}`}
+                        className={`block truncate rounded px-1 py-0.5 text-[10px] font-medium leading-tight sm:text-xs ${style.bg} ${style.text} hover:opacity-80 transition-opacity`}
+                        title={event.title}
+                      >
+                        <span className="hidden sm:inline">{event.title}</span>
+                        <span className={`inline h-1.5 w-1.5 rounded-full sm:hidden ${style.dot}`} />
+                      </Link>
+                    )
+                  })}
+                  {dayEvents.length > 3 && (
+                    <span className="block text-[10px] text-pcc-slate">+{dayEvents.length - 3} more</span>
+                  )}
+                </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
     </div>
   )
@@ -234,8 +234,6 @@ function FilterDrawer({
   categories,
   selectedCategories,
   onToggleCategory,
-  showPast,
-  onTogglePast,
   search,
   onSearch,
   onClearAll,
@@ -246,8 +244,6 @@ function FilterDrawer({
   categories: string[]
   selectedCategories: Set<string>
   onToggleCategory: (cat: string) => void
-  showPast: boolean
-  onTogglePast: () => void
   search: string
   onSearch: (v: string) => void
   onClearAll: () => void
@@ -299,7 +295,7 @@ function FilterDrawer({
                   key={cat}
                   type="button"
                   onClick={() => onToggleCategory(cat)}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                  className={`rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${
                     isActive ? 'bg-pcc-navy text-white' : `${style.bg} ${style.text}`
                   }`}
                 >
@@ -308,19 +304,6 @@ function FilterDrawer({
               )
             })}
           </div>
-        </div>
-
-        {/* Past toggle */}
-        <div className="mb-6">
-          <label className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              checked={showPast}
-              onChange={onTogglePast}
-              className="h-4 w-4 rounded border-pcc-cream-dark text-pcc-navy focus:ring-pcc-teal/30"
-            />
-            <span className="text-sm text-pcc-navy">Include past events</span>
-          </label>
         </div>
 
         {/* Actions */}
@@ -358,7 +341,6 @@ export function CalendarView({
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
-  const [showPast, setShowPast] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const toggleCategory = (cat: string) => {
@@ -373,23 +355,15 @@ export function CalendarView({
   const clearAll = () => {
     setSelectedCategories(new Set())
     setSearch('')
-    setShowPast(false)
   }
 
   const activeFilterCount =
-    selectedCategories.size + (search ? 1 : 0) + (showPast ? 1 : 0)
+    selectedCategories.size + (search ? 1 : 0)
 
   const filtered = useMemo(() => {
-    const now = startOfDay(new Date())
     const q = search.toLowerCase().trim()
 
     return events.filter((e) => {
-      // Past events filter
-      if (!showPast) {
-        const end = e.endDate ? new Date(e.endDate) : new Date(e.startDate)
-        if (end < now) return false
-      }
-
       // Category filter (multi-select: show all if none selected)
       if (selectedCategories.size > 0 && !selectedCategories.has(e.category)) {
         return false
@@ -403,7 +377,7 @@ export function CalendarView({
 
       return true
     })
-  }, [events, selectedCategories, search, showPast])
+  }, [events, selectedCategories, search])
 
   return (
     <div>
@@ -420,7 +394,7 @@ export function CalendarView({
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search events..."
               aria-label="Search events"
-              className="w-full rounded-lg border border-pcc-cream-dark bg-white pl-9 pr-9 py-2.5 text-sm text-pcc-navy placeholder:text-pcc-slate/50 focus:border-pcc-teal focus:outline-none focus:ring-2 focus:ring-pcc-teal/30"
+              className="w-full rounded-lg border border-pcc-cream-dark bg-white pl-9 pr-9 py-3 text-sm text-pcc-navy placeholder:text-pcc-slate/50 focus:border-pcc-teal focus:outline-none focus:ring-2 focus:ring-pcc-teal/30"
             />
             {search && (
               <button
@@ -439,7 +413,9 @@ export function CalendarView({
             <button
               type="button"
               onClick={() => setDrawerOpen(true)}
-              className="relative flex h-10 items-center gap-1.5 rounded-lg border border-pcc-cream-dark bg-white px-4 text-sm font-medium text-pcc-slate hover:bg-pcc-cream transition-colors md:hidden"
+              aria-expanded={drawerOpen}
+              aria-label={`Filters${activeFilterCount > 0 ? `, ${activeFilterCount} active` : ''}`}
+              className="relative flex h-11 items-center gap-1.5 rounded-lg border border-pcc-cream-dark bg-white px-4 text-sm font-medium text-pcc-slate hover:bg-pcc-cream transition-colors md:hidden"
             >
               <AdjustmentsHorizontalIcon className="h-4 w-4" aria-hidden="true" />
               Filters
@@ -455,10 +431,11 @@ export function CalendarView({
               <button
                 type="button"
                 onClick={() => setView('list')}
-                className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors ${
+                className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${
                   view === 'list' ? 'bg-pcc-navy text-white' : 'bg-white text-pcc-slate hover:bg-pcc-cream'
                 }`}
                 aria-label="List view"
+                aria-current={view === 'list' ? 'true' : undefined}
               >
                 <ListBulletIcon className="h-4 w-4" aria-hidden="true" />
                 List
@@ -466,10 +443,11 @@ export function CalendarView({
               <button
                 type="button"
                 onClick={() => setView('month')}
-                className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors ${
+                className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${
                   view === 'month' ? 'bg-pcc-navy text-white' : 'bg-white text-pcc-slate hover:bg-pcc-cream'
                 }`}
                 aria-label="Month view"
+                aria-current={view === 'month' ? 'true' : undefined}
               >
                 <CalendarDaysIcon className="h-4 w-4" aria-hidden="true" />
                 Month
@@ -510,15 +488,6 @@ export function CalendarView({
             )}
           </div>
 
-          <label className="flex shrink-0 items-center gap-2">
-            <input
-              type="checkbox"
-              checked={showPast}
-              onChange={() => setShowPast((p) => !p)}
-              className="h-4 w-4 rounded border-pcc-cream-dark text-pcc-navy focus:ring-pcc-teal/30"
-            />
-            <span className="text-sm text-pcc-slate">Show past events</span>
-          </label>
         </div>
       </div>
 
@@ -572,8 +541,6 @@ export function CalendarView({
         categories={categories}
         selectedCategories={selectedCategories}
         onToggleCategory={toggleCategory}
-        showPast={showPast}
-        onTogglePast={() => setShowPast((p) => !p)}
         search={search}
         onSearch={setSearch}
         onClearAll={clearAll}

@@ -771,7 +771,7 @@ async function main() {
     {
       title: 'Support Groups',
       category: 'support_groups',
-      description: 'Connect with others facing similar challenges in a safe, confidential setting. We offer various support groups throughout the year for grief, recovery, divorce care, and more.',
+      description: 'Connect with others facing similar challenges in a safe, confidential setting. Groups are available for grief, addiction recovery, divorce, cancer support, family challenges, and more.',
       contactEmail: 'pastoral@wearepcc.com',
       order: 6,
       active: true,

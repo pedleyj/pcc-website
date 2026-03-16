@@ -72,13 +72,13 @@ const categoryLabels: Record<string, string> = {
 }
 
 const categoryColors: Record<string, string> = {
-  worship: 'bg-pcc-navy/10 text-pcc-navy',
-  alpha: 'bg-pcc-emerald/10 text-pcc-emerald',
-  ministry: 'bg-pcc-teal/10 text-pcc-teal',
-  youth: 'bg-pcc-orange/10 text-pcc-orange',
-  kids: 'bg-pcc-gold/10 text-pcc-gold-dark',
-  outreach: 'bg-pcc-sage/10 text-pcc-forest',
-  community: 'bg-pcc-crimson/10 text-pcc-crimson',
+  worship: 'bg-white/20 text-white',
+  alpha: 'bg-pcc-emerald/30 text-pcc-emerald-light',
+  ministry: 'bg-pcc-teal/30 text-pcc-teal-light',
+  youth: 'bg-pcc-orange/30 text-pcc-orange-light',
+  kids: 'bg-pcc-gold/30 text-pcc-gold-light',
+  outreach: 'bg-pcc-sage/30 text-pcc-sage-light',
+  community: 'bg-pcc-crimson/30 text-white',
 }
 
 export default async function EventDetailPage({

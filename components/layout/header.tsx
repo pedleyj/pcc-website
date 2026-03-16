@@ -36,7 +36,7 @@ const dropdowns = {
       { name: 'Community Care', href: '/support/community_care' },
       { name: 'Counseling Resources', href: '/support/counseling' },
       { name: 'Marriage Support', href: '/support/marriage' },
-      { name: 'Support Groups', href: '/support/support_groups' },
+      { name: 'Support Groups', href: '/support/groups' },
     ],
   },
   About: {
