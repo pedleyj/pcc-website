@@ -3,7 +3,7 @@ import { format } from 'date-fns'
 import { prisma } from '@/lib/db'
 import { fetchPCEvents } from '@/lib/planning-center'
 
-// Protect with a shared secret so only cron/admin can trigger
+const CRON_SECRET = process.env.CRON_SECRET || ''
 const SYNC_SECRET = process.env.SYNC_SECRET || ''
 
 function stripHtml(html: string): string {
@@ -27,11 +27,16 @@ function formatTime(date: Date): string {
 }
 
 export async function GET(request: Request) {
-  // Auth check — require secret in query param or Authorization header
+  // Auth check — accept Vercel Cron header, query param secret, or Authorization header
   const url = new URL(request.url)
-  const token = url.searchParams.get('secret') || request.headers.get('authorization')?.replace('Bearer ', '')
+  const cronHeader = request.headers.get('authorization')?.replace('Bearer ', '')
+  const querySecret = url.searchParams.get('secret')
 
-  if (SYNC_SECRET && token !== SYNC_SECRET) {
+  const isVercelCron = CRON_SECRET && cronHeader === CRON_SECRET
+  const isManualTrigger = SYNC_SECRET && querySecret === SYNC_SECRET
+  const noAuthConfigured = !CRON_SECRET && !SYNC_SECRET
+
+  if (!isVercelCron && !isManualTrigger && !noAuthConfigured) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

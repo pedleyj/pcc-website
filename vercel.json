@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/sync-events?secret=${SYNC_SECRET}",
+      "path": "/api/sync-events",
       "schedule": "0 6 * * *"
     }
   ]
