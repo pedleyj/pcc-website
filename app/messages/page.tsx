@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { format } from 'date-fns'
-import { BookOpenIcon, FunnelIcon, DocumentTextIcon } from '@heroicons/react/24/outline'
+import { BookOpenIcon, FunnelIcon, DocumentTextIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { getAllMessages, getDistinctSeries, getDistinctSpeakers } from '@/lib/db/queries'
 import { FilterSelect } from '@/components/messages/filter-select'
 
@@ -16,17 +16,29 @@ export const metadata: Metadata = {
 export default async function MessagesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ series?: string; speaker?: string }>
+  searchParams: Promise<{ series?: string; speaker?: string; page?: string }>
 }) {
-  const { series, speaker } = await searchParams
+  const { series, speaker, page: pageParam } = await searchParams
+  const page = Math.max(1, parseInt(pageParam || '1', 10) || 1)
 
-  const [messages, allSeries, allSpeakers] = await Promise.all([
-    getAllMessages({ series, speaker }),
+  const [result, allSeries, allSpeakers] = await Promise.all([
+    getAllMessages({ series, speaker, page, pageSize: 12 }),
     getDistinctSeries(),
     getDistinctSpeakers(),
   ])
 
+  const { messages, total, totalPages } = result
   const hasFilters = series || speaker
+
+  // Build pagination URL helper
+  function pageUrl(p: number) {
+    const params = new URLSearchParams()
+    if (series) params.set('series', series)
+    if (speaker) params.set('speaker', speaker)
+    if (p > 1) params.set('page', String(p))
+    const qs = params.toString()
+    return `/messages${qs ? `?${qs}` : ''}`
+  }
 
   return (
     <>
@@ -79,7 +91,7 @@ export default async function MessagesPage({
               )}
             </form>
             <p className="text-sm text-pcc-slate">
-              {messages.length} message{messages.length !== 1 ? 's' : ''}
+              {total} message{total !== 1 ? 's' : ''}
             </p>
           </div>
 
@@ -140,6 +152,74 @@ export default async function MessagesPage({
                 Clear Filters
               </Link>
             </div>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <nav className="mt-12 flex items-center justify-center gap-2" aria-label="Message archive pagination">
+              {/* Previous */}
+              {page > 1 ? (
+                <Link
+                  href={pageUrl(page - 1)}
+                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-pcc-cream-dark bg-white text-pcc-navy hover:bg-pcc-cream transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal"
+                  aria-label="Previous page"
+                >
+                  <ChevronLeftIcon className="h-4 w-4" />
+                </Link>
+              ) : (
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-pcc-cream-dark bg-pcc-cream-light text-pcc-slate/40" aria-hidden="true">
+                  <ChevronLeftIcon className="h-4 w-4" />
+                </span>
+              )}
+
+              {/* Page numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((p) => {
+                  // Show first, last, and pages near current
+                  if (p === 1 || p === totalPages) return true
+                  if (Math.abs(p - page) <= 1) return true
+                  return false
+                })
+                .reduce<(number | 'ellipsis')[]>((acc, p, i, arr) => {
+                  if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push('ellipsis')
+                  acc.push(p)
+                  return acc
+                }, [])
+                .map((item, i) =>
+                  item === 'ellipsis' ? (
+                    <span key={`e${i}`} className="px-1 text-pcc-slate/40">...</span>
+                  ) : (
+                    <Link
+                      key={item}
+                      href={pageUrl(item)}
+                      className={`flex h-10 min-w-[40px] items-center justify-center rounded-lg px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal ${
+                        item === page
+                          ? 'bg-pcc-navy text-white'
+                          : 'border border-pcc-cream-dark bg-white text-pcc-navy hover:bg-pcc-cream'
+                      }`}
+                      aria-label={`Page ${item}`}
+                      aria-current={item === page ? 'page' : undefined}
+                    >
+                      {item}
+                    </Link>
+                  )
+                )}
+
+              {/* Next */}
+              {page < totalPages ? (
+                <Link
+                  href={pageUrl(page + 1)}
+                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-pcc-cream-dark bg-white text-pcc-navy hover:bg-pcc-cream transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal"
+                  aria-label="Next page"
+                >
+                  <ChevronRightIcon className="h-4 w-4" />
+                </Link>
+              ) : (
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-pcc-cream-dark bg-pcc-cream-light text-pcc-slate/40" aria-hidden="true">
+                  <ChevronRightIcon className="h-4 w-4" />
+                </span>
+              )}
+            </nav>
           )}
         </div>
       </section>

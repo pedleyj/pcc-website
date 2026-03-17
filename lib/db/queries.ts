@@ -18,15 +18,32 @@ export async function getMessageById(id: string) {
   })
 }
 
-export async function getAllMessages(options?: { series?: string; speaker?: string }) {
-  return prisma.message.findMany({
-    where: {
-      ...(options?.series ? { series: options.series } : {}),
-      ...(options?.speaker ? { speaker: options.speaker } : {}),
-    },
-    include: { _count: { select: { resources: true } } },
-    orderBy: { date: 'desc' },
-  })
+export async function getAllMessages(options?: {
+  series?: string
+  speaker?: string
+  page?: number
+  pageSize?: number
+}) {
+  const page = options?.page || 1
+  const pageSize = options?.pageSize || 12
+
+  const where = {
+    ...(options?.series ? { series: options.series } : {}),
+    ...(options?.speaker ? { speaker: options.speaker } : {}),
+  }
+
+  const [messages, total] = await Promise.all([
+    prisma.message.findMany({
+      where,
+      include: { _count: { select: { resources: true } } },
+      orderBy: { date: 'desc' },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.message.count({ where }),
+  ])
+
+  return { messages, total, page, pageSize, totalPages: Math.ceil(total / pageSize) }
 }
 
 export async function getMessagesBySeries(series: string, excludeId?: string) {
