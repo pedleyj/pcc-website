@@ -67,7 +67,7 @@ function matchYouTubeVideo(
   sermonTitle: string,
   sermonDate: string // YYYY-MM-DD
 ): string | null {
-  const dateShort = sermonDate.replace(/^20(\d\d)-0?(\d+)-0?(\d+)$/, '$1.$2.$3') // e.g. "26.3.15"
+  const dateShort = sermonDate.replace(/^20(\d\d)-0?(\d+)-0?(\d+)$/, '$2.$3.$1') // e.g. "3.15.26" (month.day.year — matches YouTube titles)
 
   // Try "Message Only" version first (cleaner for website)
   const messageOnly = videos.find(
