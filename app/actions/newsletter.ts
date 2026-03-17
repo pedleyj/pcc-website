@@ -3,11 +3,57 @@
 import { headers } from 'next/headers'
 import { validateEmailField, validateTextField } from '@/lib/utils/validation'
 import { rateLimit } from '@/lib/utils/rate-limit'
+import {
+  createNewsletterSubscriber,
+  getNewsletterSubscriberByEmail,
+} from '@/lib/db/queries'
 
 export type NewsletterFormState = {
   success: boolean
   error?: string
   fieldErrors?: Record<string, string>
+}
+
+async function sendConfirmationEmail(data: {
+  email: string
+  firstName?: string
+  confirmToken: string
+  siteUrl: string
+}) {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) {
+    console.warn('[Newsletter] RESEND_API_KEY not set — skipping confirmation email')
+    return
+  }
+
+  const confirmUrl = `${data.siteUrl}/api/newsletter/confirm?token=${data.confirmToken}`
+
+  try {
+    const { Resend } = await import('resend')
+    const resend = new Resend(apiKey)
+
+    const greeting = data.firstName ? `Hi ${data.firstName},` : 'Hi there,'
+
+    await resend.emails.send({
+      from: 'PCC Newsletter <onboarding@resend.dev>',
+      to: data.email,
+      subject: 'Confirm your PCC newsletter subscription',
+      text: `${greeting}
+
+Thanks for signing up for the Peninsula Covenant Church newsletter!
+
+Please confirm your subscription by clicking the link below:
+
+${confirmUrl}
+
+If you didn't sign up for this newsletter, you can safely ignore this email.
+
+— Peninsula Covenant Church
+3560 Farm Hill Boulevard, Redwood City, CA 94061`,
+    })
+  } catch (err) {
+    console.error('[Newsletter] Failed to send confirmation email:', err instanceof Error ? err.message : err)
+  }
 }
 
 export async function submitNewsletterSignup(
@@ -21,7 +67,13 @@ export async function submitNewsletterSignup(
     headersList.get('x-real-ip') ||
     'unknown'
 
-  const { allowed } = rateLimit(`newsletter:${ip}`, 2, 60 * 60 * 1000)
+  // Derive site URL from request so emails always link back to the correct host/port
+  const host = headersList.get('host') || 'localhost:3000'
+  const proto = headersList.get('x-forwarded-proto') || (host.startsWith('localhost') ? 'http' : 'https')
+  const siteUrl = `${proto}://${host}`
+
+  const isDev = process.env.NODE_ENV === 'development'
+  const { allowed } = rateLimit(`newsletter:${ip}`, isDev ? 20 : 2, 60 * 60 * 1000)
   if (!allowed) {
     return {
       success: false,
@@ -60,17 +112,57 @@ export async function submitNewsletterSignup(
   const name = (nameResult as { valid: true; value: string }).value
 
   // --- Rate limit per email: 1 per day ---
-  const { allowed: emailAllowed } = rateLimit(`newsletter-email:${email}`, 1, 24 * 60 * 60 * 1000)
+  const { allowed: emailAllowed } = rateLimit(`newsletter-email:${email}`, isDev ? 20 : 1, 24 * 60 * 60 * 1000)
   if (!emailAllowed) {
     return {
       success: false,
-      error: 'This email is already signed up. Check your inbox for a confirmation.',
+      error: 'This email was recently submitted. Check your inbox for a confirmation link.',
     }
   }
 
-  // TODO: Connect to email service (Mailchimp, ConvertKit, etc.)
-  // For now, log server-side only (not visible to browser)
-  console.info('[Newsletter Signup]', { email, name: name || '(not provided)' })
+  // --- Check if already subscribed ---
+  try {
+    const existing = await getNewsletterSubscriberByEmail(email)
+
+    if (existing) {
+      if (existing.status === 'confirmed') {
+        return {
+          success: false,
+          error: "You're already subscribed to our newsletter!",
+        }
+      }
+
+      // Re-send confirmation for pending or unsubscribed users
+      sendConfirmationEmail({
+        email,
+        firstName: name || existing.firstName || undefined,
+        confirmToken: existing.confirmToken,
+        siteUrl,
+      })
+
+      return { success: true }
+    }
+
+    // --- Create new subscriber ---
+    const subscriber = await createNewsletterSubscriber({
+      email,
+      firstName: name || undefined,
+    })
+
+    // --- Send confirmation email (fire and forget) ---
+    sendConfirmationEmail({
+      email,
+      firstName: name || undefined,
+      confirmToken: subscriber.confirmToken,
+      siteUrl,
+    })
+  } catch (err) {
+    console.error('[Newsletter] Signup error:', err instanceof Error ? err.message : err)
+    return {
+      success: false,
+      error: 'Something went wrong. Please try again later.',
+    }
+  }
 
   return { success: true }
 }

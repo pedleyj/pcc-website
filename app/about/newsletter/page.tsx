@@ -70,10 +70,13 @@ export default function NewsletterPage() {
             {state.success ? (
               <div className="text-center">
                 <CheckCircleIcon className="mx-auto h-12 w-12 text-pcc-teal" aria-hidden="true" />
-                <h2 className="mt-6 text-2xl font-bold text-pcc-navy">You&apos;re Signed Up!</h2>
+                <h2 className="mt-6 text-2xl font-bold text-pcc-navy">Almost There!</h2>
                 <p className="mt-4 text-pcc-slate">
-                  Thank you for subscribing. You&apos;ll start receiving our newsletter soon.
-                  Keep an eye on your inbox!
+                  Thanks for signing up! Please check your email and click the confirmation
+                  link to complete your subscription.
+                </p>
+                <p className="mt-2 text-sm text-pcc-slate/70">
+                  Don&apos;t see it? Check your spam folder.
                 </p>
               </div>
             ) : (

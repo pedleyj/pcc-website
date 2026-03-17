@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Logo } from './logo'
+import { FooterNewsletter } from './footer-newsletter'
 
 function FacebookIcon({ className }: { className?: string }) {
   return (
@@ -147,6 +148,17 @@ export function Footer() {
               <li><Link href="/about/leadership" className="hover:text-white transition-colors">Our Leadership</Link></li>
               <li><Link href="/about/staff" className="hover:text-white transition-colors">Staff Directory</Link></li>
             </ul>
+          </div>
+        </div>
+
+        {/* Newsletter Signup */}
+        <div className="mt-8 border-t border-white/20 pt-8">
+          <div className="mx-auto max-w-md text-center">
+            <h3 className="text-lg font-semibold mb-2">Stay Connected</h3>
+            <p className="text-sm text-white/70 mb-4">
+              Get weekly updates from PCC delivered to your inbox.
+            </p>
+            <FooterNewsletter />
           </div>
         </div>
 

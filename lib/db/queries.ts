@@ -203,6 +203,36 @@ export async function createPrayerRequest(data: {
   return prisma.prayerRequest.create({ data })
 }
 
+// Newsletter Subscribers
+export async function createNewsletterSubscriber(data: {
+  email: string
+  firstName?: string
+}) {
+  return prisma.newsletterSubscriber.create({ data })
+}
+
+export async function getNewsletterSubscriberByEmail(email: string) {
+  return prisma.newsletterSubscriber.findUnique({ where: { email } })
+}
+
+export async function confirmNewsletterSubscriber(confirmToken: string) {
+  return prisma.newsletterSubscriber.update({
+    where: { confirmToken },
+    data: { status: 'confirmed', confirmedAt: new Date() },
+  })
+}
+
+export async function unsubscribeNewsletter(unsubToken: string) {
+  return prisma.newsletterSubscriber.update({
+    where: { unsubToken },
+    data: { status: 'unsubscribed', unsubscribedAt: new Date() },
+  })
+}
+
+export async function getNewsletterSubscriberByUnsubToken(unsubToken: string) {
+  return prisma.newsletterSubscriber.findUnique({ where: { unsubToken } })
+}
+
 export async function getPublicPrayerRequests(limit = 15) {
   return prisma.prayerRequest.findMany({
     where: { isPublic: true },

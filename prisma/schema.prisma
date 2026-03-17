@@ -193,6 +193,23 @@ model SupportResource {
   @@index([order])
 }
 
+model NewsletterSubscriber {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  firstName       String?
+  status          String    @default("pending") // "pending", "confirmed", "unsubscribed"
+  confirmToken    String    @unique @default(cuid())
+  unsubToken      String    @unique @default(cuid())
+  confirmedAt     DateTime?
+  unsubscribedAt  DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([status])
+  @@index([confirmToken])
+  @@index([unsubToken])
+}
+
 model SiteSettings {
   id            String   @id @default(cuid())
   serviceTimes  String   @db.Text
