@@ -39,56 +39,74 @@ async function pcFetch(path: string): Promise<PCResponse> {
   return res.json() as Promise<PCResponse>
 }
 
-// --- YouTube RSS feed ---
+// --- YouTube search via Data API ---
 
-type YouTubeVideo = {
-  title: string
-  videoId: string
-  published: string
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || ''
+
+async function searchYouTubeVideo(sermonTitle: string, sermonDate: string): Promise<string | null> {
+  if (!YOUTUBE_API_KEY) return fallbackRssMatch(sermonTitle, sermonDate)
+
+  const dateShort = sermonDate.replace(/^20(\d\d)-0?(\d+)-0?(\d+)$/, '$2.$3.$1')
+
+  // Search for "Message Only" version first (cleaner cut)
+  const queries = [
+    `${sermonTitle} ${dateShort} message only`,
+    `${sermonTitle} ${dateShort}`,
+  ]
+
+  for (const q of queries) {
+    try {
+      const params = new URLSearchParams({
+        part: 'snippet',
+        channelId: YOUTUBE_CHANNEL_ID,
+        q,
+        type: 'video',
+        maxResults: '3',
+        key: YOUTUBE_API_KEY,
+      })
+      const res = await fetch(`https://www.googleapis.com/youtube/v3/search?${params}`, { cache: 'no-store' })
+      if (!res.ok) continue
+
+      const data = await res.json() as { items?: { id: { videoId: string }; snippet: { title: string } }[] }
+      const items = data.items || []
+
+      // Filter out gatherings/livestreams — prefer "message only" or titled videos
+      const match = items.find((i) => {
+        const t = i.snippet.title.toLowerCase()
+        return !t.includes('9 am gathering') && !t.includes('4:30 pm') && !t.includes('12:30 pm') && !t.includes('pcc gathering')
+      })
+
+      if (match) return `https://www.youtube.com/watch?v=${match.id.videoId}`
+    } catch {
+      // continue to next query
+    }
+  }
+
+  return null
 }
 
-async function fetchYouTubeVideos(limit = 30): Promise<YouTubeVideo[]> {
-  const res = await fetch(
-    `https://www.youtube.com/feeds/videos.xml?channel_id=${YOUTUBE_CHANNEL_ID}`,
-    { cache: 'no-store' }
-  )
-  if (!res.ok) return []
-  const xml = await res.text()
-  const entries = xml.match(/<entry>[\s\S]*?<\/entry>/g) || []
-  return entries.slice(0, limit).map((e) => ({
-    title: (e.match(/<title>(.*?)<\/title>/)?.[1] || '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/&quot;/g, '"'),
-    videoId: e.match(/<yt:videoId>(.*?)<\/yt:videoId>/)?.[1] || '',
-    published: e.match(/<published>(.*?)<\/published>/)?.[1]?.slice(0, 10) || '',
-  }))
-}
+// Fallback: RSS feed for recent videos (no API key needed)
+async function fallbackRssMatch(sermonTitle: string, sermonDate: string): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `https://www.youtube.com/feeds/videos.xml?channel_id=${YOUTUBE_CHANNEL_ID}`,
+      { cache: 'no-store' }
+    )
+    if (!res.ok) return null
+    const xml = await res.text()
+    const entries = xml.match(/<entry>[\s\S]*?<\/entry>/g) || []
+    const dateShort = sermonDate.replace(/^20(\d\d)-0?(\d+)-0?(\d+)$/, '$2.$3.$1')
 
-function matchYouTubeVideo(
-  videos: YouTubeVideo[],
-  sermonTitle: string,
-  sermonDate: string // YYYY-MM-DD
-): string | null {
-  const dateShort = sermonDate.replace(/^20(\d\d)-0?(\d+)-0?(\d+)$/, '$2.$3.$1') // e.g. "3.15.26" (month.day.year — matches YouTube titles)
-
-  // Try "Message Only" version first (cleaner for website)
-  const messageOnly = videos.find(
-    (v) => v.title.toLowerCase().includes('message only') && v.title.includes(dateShort)
-  )
-  if (messageOnly) return `https://www.youtube.com/watch?v=${messageOnly.videoId}`
-
-  // Try matching by date in title
-  const byDate = videos.find(
-    (v) => v.title.includes(dateShort) && !v.title.toLowerCase().includes('9 am gathering') && !v.title.toLowerCase().includes('4:30 pm') && !v.title.toLowerCase().includes('12:30 pm')
-  )
-  if (byDate) return `https://www.youtube.com/watch?v=${byDate.videoId}`
-
-  // Try matching by title keywords
-  const titleWords = sermonTitle.toLowerCase().split(/\s+/).filter((w) => w.length > 3)
-  const byTitle = videos.find((v) => {
-    const vLower = v.title.toLowerCase()
-    return titleWords.filter((w) => vLower.includes(w)).length >= 2 && !vLower.includes('9 am gathering')
-  })
-  if (byTitle) return `https://www.youtube.com/watch?v=${byTitle.videoId}`
-
+    for (const e of entries) {
+      const title = (e.match(/<title>(.*?)<\/title>/)?.[1] || '').replace(/&amp;/g, '&').replace(/&#39;/g, "'")
+      const videoId = e.match(/<yt:videoId>(.*?)<\/yt:videoId>/)?.[1]
+      if (videoId && title.includes(dateShort) && !title.toLowerCase().includes('9 am gathering')) {
+        return `https://www.youtube.com/watch?v=${videoId}`
+      }
+    }
+  } catch {
+    // ignore
+  }
   return null
 }
 
@@ -144,9 +162,6 @@ export async function fetchMessagesFromPC(limit = 20): Promise<SyncedMessage[]> 
     }
   }
 
-  // Fetch YouTube videos
-  const ytVideos = await fetchYouTubeVideos(50)
-
   const messages: SyncedMessage[] = []
 
   for (const plan of plansRes.data) {
@@ -176,7 +191,7 @@ export async function fetchMessagesFromPC(limit = 20): Promise<SyncedMessage[]> 
     }
 
     // Match YouTube video
-    const videoUrl = matchYouTubeVideo(ytVideos, title, date)
+    const videoUrl = await searchYouTubeVideo(title, date)
 
     // Check for Beyond Sunday PDF
     const seriesSlug = seriesTitle ? slugify(seriesTitle) : null
