@@ -122,8 +122,10 @@ export default async function GatheringsPage() {
                 Current Series
               </p>
               <h2 className="mt-2 text-3xl font-bold text-white sm:text-4xl">{currentSeries}</h2>
-              <p className="mt-4 text-lg text-white/70">
-                Follow along with our latest teaching series
+              <p className="mx-auto mt-4 max-w-2xl text-lg text-white/80">
+                {currentSeries === "God's Big Story"
+                  ? 'A nine-week series tracing the overarching storyline of Scripture — from creation to new creation — showing how the whole Bible tells one unified story of God\'s kingdom and saving work in the world.'
+                  : 'Follow along with our latest teaching series'}
               </p>
             </div>
           </div>

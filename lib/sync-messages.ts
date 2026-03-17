@@ -150,8 +150,9 @@ export async function fetchMessagesFromPC(limit = 20): Promise<SyncedMessage[]> 
   const messages: SyncedMessage[] = []
 
   for (const plan of plansRes.data) {
-    const title = plan.attributes.title as string
+    const title = (plan.attributes.title as string) || 'Sunday Message'
     const sortDate = plan.attributes.sort_date as string
+    if (!sortDate) continue
     const date = sortDate.slice(0, 10)
     const seriesTitle = plan.attributes.series_title as string | null
     const seriesRef = plan.relationships?.series?.data
@@ -166,7 +167,7 @@ export async function fetchMessagesFromPC(limit = 20): Promise<SyncedMessage[]> 
       const preacher = teamRes.data.find(
         (m) => {
           const pos = (m.attributes.team_position_name as string || '').toLowerCase()
-          return pos.includes('teaching') || pos.includes('preaching') || pos.includes('speaker') || pos.includes('sermon')
+          return pos.includes('teach') || pos.includes('preach') || pos.includes('speaker') || pos.includes('sermon') || pos.includes('message') || pos.includes('pastor')
         }
       )
       if (preacher) speaker = preacher.attributes.name as string
