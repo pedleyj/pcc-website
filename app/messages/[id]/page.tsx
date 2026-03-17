@@ -5,17 +5,26 @@ import { notFound } from 'next/navigation'
 import { format } from 'date-fns'
 import {
   ChevronRightIcon,
+  ChevronLeftIcon,
   BookOpenIcon,
   CalendarDaysIcon,
   UserIcon,
   ArrowDownTrayIcon,
-  PlayCircleIcon,
   DocumentTextIcon,
   DocumentArrowDownIcon,
   SparklesIcon,
   ChatBubbleLeftRightIcon,
+  TagIcon,
 } from '@heroicons/react/24/outline'
-import { getMessageById, getMessagesBySeries } from '@/lib/db/queries'
+import {
+  getMessageById,
+  getMessagesBySeries,
+  getSeriesNavigation,
+} from '@/lib/db/queries'
+import { parseScriptureLinks } from '@/lib/utils/scripture'
+import { MediaPlayer } from '@/components/messages/media-player'
+import { ShareButtons } from '@/components/messages/share-buttons'
+import { ViewCounter } from '@/components/messages/view-counter'
 
 export const revalidate = 60
 
@@ -31,24 +40,37 @@ export async function generateMetadata({
     return { title: 'Message Not Found | Peninsula Covenant Church' }
   }
 
+  const description = message.description || `${message.title} by ${message.speaker} at PCC.`
+
   return {
     title: `${message.title} | Messages | Peninsula Covenant Church`,
-    description: message.description || `${message.title} by ${message.speaker} at PCC.`,
+    description,
+    openGraph: {
+      title: message.title,
+      description,
+      url: `https://pcc-website-ten.vercel.app/messages/${message.id}`,
+      siteName: 'Peninsula Covenant Church',
+      images: message.thumbnail ? [{ url: message.thumbnail, width: 1280, height: 720 }] : [],
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: message.title,
+      description,
+      images: message.thumbnail ? [message.thumbnail] : [],
+    },
   }
 }
 
 function getYouTubeEmbedUrl(url: string): string | null {
   try {
     const parsed = new URL(url)
-    // Handle youtu.be/ID
     if (parsed.hostname === 'youtu.be') {
       return `https://www.youtube.com/embed/${parsed.pathname.slice(1)}`
     }
-    // Handle youtube.com/watch?v=ID
     if (parsed.hostname.includes('youtube.com')) {
       const videoId = parsed.searchParams.get('v')
       if (videoId) return `https://www.youtube.com/embed/${videoId}`
-      // Already an embed URL
       if (parsed.pathname.startsWith('/embed/')) return url
     }
   } catch {
@@ -69,11 +91,18 @@ export default async function MessageDetailPage({
     notFound()
   }
 
-  const relatedMessages = message.series
-    ? await getMessagesBySeries(message.series, message.id)
-    : []
+  const [relatedMessages, seriesNav] = await Promise.all([
+    message.series
+      ? getMessagesBySeries(message.series, message.id)
+      : Promise.resolve([]),
+    message.series
+      ? getSeriesNavigation(message.series, message.date, message.id)
+      : Promise.resolve({ prev: null, next: null }),
+  ])
 
   const embedUrl = message.videoUrl ? getYouTubeEmbedUrl(message.videoUrl) : null
+  const scriptureLinks = message.scripture ? parseScriptureLinks(message.scripture) : []
+  const shareUrl = `https://pcc-website-ten.vercel.app/messages/${message.id}`
 
   return (
     <>
@@ -114,48 +143,57 @@ export default async function MessageDetailPage({
               <CalendarDaysIcon className="h-4 w-4" aria-hidden="true" />
               {format(new Date(message.date), 'MMMM d, yyyy')}
             </span>
-            {message.scripture && (
+            {scriptureLinks.length > 0 && (
               <span className="flex items-center gap-1.5">
                 <BookOpenIcon className="h-4 w-4" aria-hidden="true" />
-                {message.scripture}
+                {scriptureLinks.map((ref, i) => (
+                  <span key={ref.text}>
+                    <a
+                      href={ref.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline decoration-white/40 underline-offset-2 hover:text-white hover:decoration-white transition-colors"
+                    >
+                      {ref.text}
+                    </a>
+                    {i < scriptureLinks.length - 1 && ', '}
+                  </span>
+                ))}
               </span>
             )}
+            <ViewCounter messageId={message.id} initialCount={message.viewCount} />
           </div>
+
+          {/* Tags */}
+          {message.tags.length > 0 && (
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <TagIcon className="h-4 w-4 text-white/50" aria-hidden="true" />
+              {message.tags.map((tag) => (
+                <Link
+                  key={tag}
+                  href={`/messages?tag=${encodeURIComponent(tag)}`}
+                  className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white/90 hover:bg-white/20 transition-colors"
+                >
+                  {tag}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
       {/* Content */}
       <section className="bg-pcc-cream">
         <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-          {/* Video Player */}
-          {embedUrl && (
-            <div className="mb-10 overflow-hidden rounded-2xl shadow-lg">
-              <div className="relative aspect-video">
-                <iframe
-                  src={embedUrl}
-                  title={message.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="absolute inset-0 h-full w-full"
-                  loading="lazy"
-                />
-              </div>
-            </div>
-          )}
+          {/* Media Player */}
+          <MediaPlayer
+            videoEmbedUrl={embedUrl}
+            audioUrl={message.audioUrl}
+            title={message.title}
+          />
 
-          {/* Audio Player (fallback when no video) */}
-          {!embedUrl && message.audioUrl && (
-            <div className="mb-10 rounded-xl bg-white p-6 shadow-md">
-              <div className="flex items-center gap-3 mb-4">
-                <PlayCircleIcon className="h-6 w-6 text-pcc-teal" aria-hidden="true" />
-                <h2 className="text-lg font-bold text-pcc-navy">Listen</h2>
-              </div>
-              <audio controls className="w-full" preload="metadata">
-                <source src={message.audioUrl} />
-                Your browser does not support the audio element.
-              </audio>
-            </div>
-          )}
+          {/* Share Buttons */}
+          <ShareButtons title={message.title} url={shareUrl} />
 
           {/* Description */}
           {message.description && (
@@ -229,6 +267,55 @@ export default async function MessageDetailPage({
               <p className="mt-2 text-sm text-pcc-slate">
                 Resources for personal reflection or group discussion
               </p>
+            </div>
+          )}
+
+          {/* Series Navigation (Prev/Next) */}
+          {message.series && (seriesNav.prev || seriesNav.next) && (
+            <div className="mt-10">
+              <h3 className="text-sm font-semibold text-pcc-slate uppercase tracking-wider mb-4">
+                More from &ldquo;{message.series}&rdquo;
+              </h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {seriesNav.prev ? (
+                  <Link
+                    href={`/messages/${seriesNav.prev.id}`}
+                    className="group flex items-center gap-4 rounded-xl bg-white p-5 shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5"
+                  >
+                    <ChevronLeftIcon className="h-5 w-5 shrink-0 text-pcc-slate group-hover:text-pcc-teal transition-colors" aria-hidden="true" />
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-pcc-slate">Previous</p>
+                      <p className="mt-0.5 font-semibold text-pcc-navy group-hover:text-pcc-teal transition-colors truncate">
+                        {seriesNav.prev.title}
+                      </p>
+                      <p className="mt-0.5 text-xs text-pcc-slate">
+                        {format(new Date(seriesNav.prev.date), 'MMM d, yyyy')}
+                      </p>
+                    </div>
+                  </Link>
+                ) : (
+                  <div />
+                )}
+                {seriesNav.next ? (
+                  <Link
+                    href={`/messages/${seriesNav.next.id}`}
+                    className="group flex items-center justify-end gap-4 rounded-xl bg-white p-5 shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5 text-right"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-pcc-slate">Next</p>
+                      <p className="mt-0.5 font-semibold text-pcc-navy group-hover:text-pcc-teal transition-colors truncate">
+                        {seriesNav.next.title}
+                      </p>
+                      <p className="mt-0.5 text-xs text-pcc-slate">
+                        {format(new Date(seriesNav.next.date), 'MMM d, yyyy')}
+                      </p>
+                    </div>
+                    <ChevronRightIcon className="h-5 w-5 shrink-0 text-pcc-slate group-hover:text-pcc-teal transition-colors" aria-hidden="true" />
+                  </Link>
+                ) : (
+                  <div />
+                )}
+              </div>
             </div>
           )}
 

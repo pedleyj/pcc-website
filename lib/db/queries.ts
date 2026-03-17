@@ -21,6 +21,7 @@ export async function getMessageById(id: string) {
 export async function getAllMessages(options?: {
   series?: string
   speaker?: string
+  tag?: string
   page?: number
   pageSize?: number
 }) {
@@ -30,6 +31,7 @@ export async function getAllMessages(options?: {
   const where = {
     ...(options?.series ? { series: options.series } : {}),
     ...(options?.speaker ? { speaker: options.speaker } : {}),
+    ...(options?.tag ? { tags: { has: options.tag } } : {}),
   }
 
   const [messages, total] = await Promise.all([
@@ -53,6 +55,30 @@ export async function getMessagesBySeries(series: string, excludeId?: string) {
       ...(excludeId ? { id: { not: excludeId } } : {}),
     },
     orderBy: { date: 'desc' },
+  })
+}
+
+export async function getSeriesNavigation(series: string, currentDate: Date, currentId: string) {
+  const [prev, next] = await Promise.all([
+    prisma.message.findFirst({
+      where: { series, date: { lt: currentDate }, id: { not: currentId } },
+      orderBy: { date: 'desc' },
+      select: { id: true, title: true, speaker: true, date: true },
+    }),
+    prisma.message.findFirst({
+      where: { series, date: { gt: currentDate }, id: { not: currentId } },
+      orderBy: { date: 'asc' },
+      select: { id: true, title: true, speaker: true, date: true },
+    }),
+  ])
+  return { prev, next }
+}
+
+export async function incrementViewCount(id: string) {
+  return prisma.message.update({
+    where: { id },
+    data: { viewCount: { increment: 1 } },
+    select: { viewCount: true },
   })
 }
 

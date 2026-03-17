@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { format } from 'date-fns'
-import { BookOpenIcon, FunnelIcon, DocumentTextIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { BookOpenIcon, FunnelIcon, DocumentTextIcon, ChevronLeftIcon, ChevronRightIcon, TagIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { getAllMessages, getDistinctSeries, getDistinctSpeakers } from '@/lib/db/queries'
 import { FilterSelect } from '@/components/messages/filter-select'
 
@@ -16,25 +16,26 @@ export const metadata: Metadata = {
 export default async function MessagesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ series?: string; speaker?: string; page?: string }>
+  searchParams: Promise<{ series?: string; speaker?: string; tag?: string; page?: string }>
 }) {
-  const { series, speaker, page: pageParam } = await searchParams
+  const { series, speaker, tag, page: pageParam } = await searchParams
   const page = Math.max(1, parseInt(pageParam || '1', 10) || 1)
 
   const [result, allSeries, allSpeakers] = await Promise.all([
-    getAllMessages({ series, speaker, page, pageSize: 12 }),
+    getAllMessages({ series, speaker, tag, page, pageSize: 12 }),
     getDistinctSeries(),
     getDistinctSpeakers(),
   ])
 
   const { messages, total, totalPages } = result
-  const hasFilters = series || speaker
+  const hasFilters = series || speaker || tag
 
   // Build pagination URL helper
   function pageUrl(p: number) {
     const params = new URLSearchParams()
     if (series) params.set('series', series)
     if (speaker) params.set('speaker', speaker)
+    if (tag) params.set('tag', tag)
     if (p > 1) params.set('page', String(p))
     const qs = params.toString()
     return `/messages${qs ? `?${qs}` : ''}`
@@ -94,6 +95,20 @@ export default async function MessagesPage({
               {total} message{total !== 1 ? 's' : ''}
             </p>
           </div>
+
+          {/* Active tag filter */}
+          {tag && (
+            <div className="mb-6 flex items-center gap-2">
+              <TagIcon className="h-4 w-4 text-pcc-teal" aria-hidden="true" />
+              <span className="text-sm text-pcc-slate">Tagged:</span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-pcc-teal/10 px-3 py-1 text-sm font-medium text-pcc-teal">
+                {tag}
+                <Link href="/messages" aria-label={`Remove ${tag} filter`}>
+                  <XMarkIcon className="h-3.5 w-3.5 hover:text-pcc-teal-dark" />
+                </Link>
+              </span>
+            </div>
+          )}
 
           {/* Message Grid */}
           {messages.length > 0 ? (
