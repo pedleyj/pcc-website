@@ -1,52 +1,61 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { AcademicCapIcon, BuildingLibraryIcon, UserGroupIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
+import {
+  AcademicCapIcon,
+  BuildingLibraryIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
 
 export const metadata: Metadata = {
   title: 'Community Programs | Peninsula Covenant Church',
-  description: 'Preschool, community center, and programs serving families at PCC.',
+  description:
+    'PCC serves the broader community through three ministry programs: Preschool, Peninsula Community Center, and School Age Child Care (SACC).',
 }
 
 const programs = [
   {
     name: 'PCC Preschool',
-    href: 'https://www.peninsulacovenantpreschool.com/',
+    href: '/about/community/preschool',
     icon: AcademicCapIcon,
-    description:
-      'A nurturing, play-based preschool for children ages 2 through 5. Our experienced teachers create a warm, supportive environment where young learners build social skills, confidence, and a love of learning through hands-on exploration and discovery.',
-    detail: 'Located on the PCC campus in Redwood City, the preschool has been serving families on the peninsula for decades.',
+    tagline: 'Where curiosity blossoms, friendships grow, and every child is known and loved',
+    detail: 'Ages 2–5 | Est. 1965',
+    color: 'bg-pcc-emerald/10 text-pcc-emerald',
   },
   {
     name: 'Peninsula Community Center',
-    href: 'https://peninsulacommunitycenter.com/',
+    href: '/about/community/community-center',
     icon: BuildingLibraryIcon,
-    description:
-      'A vibrant community hub offering fitness classes, enrichment programs, and facility rentals for families throughout the peninsula. From youth sports to adult wellness, the Community Center provides affordable, accessible programming for people of all ages.',
-    detail: 'Open to the public and located on the PCC campus, the Center hosts classes, camps, and community events year-round.',
+    tagline: 'Fitness, aquatics, tennis & community programs',
+    detail: 'Memberships available',
+    color: 'bg-pcc-teal/10 text-pcc-teal',
   },
   {
-    name: 'School Age Child Care (SACC)',
-    href: 'https://pccsacc.com/',
+    name: 'PCC School Age Child Care',
+    href: '/about/community/sacc',
     icon: UserGroupIcon,
-    description:
-      'Before- and after-school care for elementary-age children, providing a safe and engaging environment during the hours when families need it most. Kids enjoy homework help, creative activities, outdoor play, and friendships in a caring, structured setting.',
-    detail: 'SACC partners with local schools to offer convenient pickup and drop-off, giving families peace of mind throughout the school year.',
+    tagline: 'After-school care shaped by love, inclusion, and integrity',
+    detail: 'Elementary ages (K–5th)',
+    color: 'bg-pcc-gold/15 text-pcc-gold-dark',
   },
 ]
 
 export default function CommunityPage() {
   return (
     <>
-      <section className="relative flex min-h-[40vh] items-center justify-center bg-pcc-navy">
-        <div className="relative mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
+      <section className="relative bg-pcc-navy">
+        <div className="relative mx-auto max-w-4xl px-4 pt-8 sm:px-6 lg:px-8">
+          <Breadcrumb items={[{ label: 'About', href: '/about' }, { label: 'Community Programs' }]} />
+        </div>
+        <div className="relative mx-auto max-w-4xl px-4 pb-20 pt-8 text-center sm:px-6 lg:px-8">
           <h1
             className="text-4xl font-bold tracking-tight text-white sm:text-5xl"
             style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}
           >
-            Community Programs
+            Serving Our Community
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-xl text-white/90">
-            Serving families throughout the peninsula
+            Beyond Sunday mornings, PCC serves the community through three ministry programs
           </p>
         </div>
       </section>
@@ -56,8 +65,8 @@ export default function CommunityPage() {
         <div className="mx-auto max-w-3xl px-4 pt-20 pb-10 text-center sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-pcc-navy">More Than a Church</h2>
           <p className="mt-4 text-lg text-pcc-slate">
-            Our campus is home to several programs that serve the broader community.
-            Whether you attend PCC or not, these ministries are here for you and your family.
+            Our campus is home to programs that serve the broader community. Whether you attend
+            PCC or not, these ministries are here for you and your family.
           </p>
         </div>
       </section>
@@ -65,34 +74,40 @@ export default function CommunityPage() {
       {/* Program Cards */}
       <section className="bg-pcc-cream">
         <div className="mx-auto max-w-5xl px-4 pb-20 sm:px-6 lg:px-8">
-          <div className="space-y-8">
+          <div className="grid gap-6 sm:grid-cols-3">
             {programs.map((program) => (
-              <div
+              <Link
                 key={program.href}
-                className="rounded-xl bg-white p-8 shadow-md sm:p-10"
+                href={program.href}
+                className="group rounded-xl bg-white p-8 shadow-md transition-all hover:shadow-xl hover:-translate-y-1"
               >
-                <div className="flex items-start gap-5">
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-pcc-navy/10 text-pcc-navy">
-                    <program.icon className="h-7 w-7" aria-hidden="true" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-pcc-navy">{program.name}</h3>
-                    <p className="mt-2 text-pcc-slate leading-relaxed">{program.description}</p>
-                    <p className="mt-2 text-sm text-pcc-slate/70 leading-relaxed">{program.detail}</p>
-                    <a
-                      href={program.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Visit ${program.name} website (opens in new tab)`}
-                      className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-pcc-navy hover:text-pcc-teal transition-colors"
-                    >
-                      Visit Website
-                      <ArrowTopRightOnSquareIcon className="h-4 w-4" aria-hidden="true" />
-                    </a>
-                  </div>
+                <div className={`flex h-14 w-14 items-center justify-center rounded-full ${program.color}`}>
+                  <program.icon className="h-7 w-7" aria-hidden="true" />
                 </div>
-              </div>
+                <h3 className="mt-5 text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                  {program.name}
+                </h3>
+                <p className="mt-2 text-sm text-pcc-slate leading-relaxed">
+                  {program.tagline}
+                </p>
+                <p className="mt-3 text-xs font-medium text-pcc-slate/60">
+                  {program.detail}
+                </p>
+                <span className="mt-4 inline-block text-sm font-semibold text-pcc-teal group-hover:text-pcc-teal-dark transition-colors">
+                  Learn More &rarr;
+                </span>
+              </Link>
             ))}
+          </div>
+
+          {/* Connection to PCC */}
+          <div className="mt-16 rounded-xl bg-white p-8 text-center shadow-md sm:p-10">
+            <h3 className="text-xl font-bold text-pcc-navy">A Ministry of Peninsula Covenant Church</h3>
+            <p className="mx-auto mt-4 max-w-2xl text-pcc-slate leading-relaxed">
+              Each of these programs is a ministry of PCC, extending our mission of love and service
+              to the broader Redwood City community. We&apos;re committed to providing excellence and care
+              in everything we do &mdash; from early childhood education to fitness and after-school programs.
+            </p>
           </div>
 
           <div className="mt-12 text-center">

@@ -126,19 +126,19 @@ export function Footer() {
             <h3 className="text-lg font-semibold mb-4">Community</h3>
             <ul className="space-y-2 text-sm text-white/90">
               <li>
-                <a href="https://www.peninsulacovenantpreschool.com/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                <Link href="/about/community/preschool" className="hover:text-white transition-colors">
                   PCC Preschool
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="https://peninsulacommunitycenter.com/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                <Link href="/about/community/community-center" className="hover:text-white transition-colors">
                   Peninsula Community Center
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="https://pccsacc.com/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                <Link href="/about/community/sacc" className="hover:text-white transition-colors">
                   School Age Child Care (SACC)
-                </a>
+                </Link>
               </li>
             </ul>
 
