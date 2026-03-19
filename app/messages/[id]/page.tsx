@@ -25,6 +25,7 @@ import { parseScriptureLinks } from '@/lib/utils/scripture'
 import { MediaPlayer } from '@/components/messages/media-player'
 import { ShareButtons } from '@/components/messages/share-buttons'
 import { ViewCounter } from '@/components/messages/view-counter'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
 
 export const revalidate = 60
 
@@ -110,13 +111,7 @@ export default async function MessageDetailPage({
       <section className="bg-pcc-navy">
         <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
-          <nav className="mb-6 flex items-center gap-1 text-sm text-white/70" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <ChevronRightIcon className="h-3 w-3" aria-hidden="true" />
-            <Link href="/messages" className="hover:text-white transition-colors">Messages</Link>
-            <ChevronRightIcon className="h-3 w-3" aria-hidden="true" />
-            <span className="text-white truncate max-w-[200px]">{message.title}</span>
-          </nav>
+          <Breadcrumb items={[{ label: 'Messages', href: '/messages' }, { label: message.title }]} />
 
           {message.series && (
             <Link

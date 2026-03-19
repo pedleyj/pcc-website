@@ -14,6 +14,7 @@ import {
   ChevronDownIcon,
 } from '@heroicons/react/24/outline'
 import { getCurrentAlphaSession } from '@/lib/db/queries'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
 
 export const revalidate = 60
 
@@ -35,8 +36,11 @@ export default async function AlphaPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative flex min-h-[60vh] items-center justify-center overflow-hidden bg-pcc-navy">
-        <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
+      <section className="relative overflow-hidden bg-pcc-navy">
+        <div className="relative z-10 mx-auto max-w-4xl px-4 pt-8 sm:px-6 lg:px-8">
+          <Breadcrumb items={[{ label: 'Explore Faith', href: '/explore-faith' }, { label: 'Alpha' }]} />
+        </div>
+        <div className="relative z-10 mx-auto max-w-4xl px-4 pb-20 pt-8 text-center">
           <h1
             className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl"
             style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}

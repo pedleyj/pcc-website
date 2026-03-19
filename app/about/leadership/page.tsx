@@ -4,10 +4,10 @@ import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
-  ChevronRightIcon,
   EnvelopeIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
 
 type Leader = {
   name: string
@@ -207,15 +207,11 @@ export default function LeadershipPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative flex min-h-[40vh] items-center justify-center bg-pcc-navy">
-        <div className="relative mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
-          <nav className="mb-8 flex items-center justify-center gap-1 text-sm text-white/70" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <ChevronRightIcon className="h-3 w-3" aria-hidden="true" />
-            <Link href="/about" className="hover:text-white transition-colors">About</Link>
-            <ChevronRightIcon className="h-3 w-3" aria-hidden="true" />
-            <span className="text-white">Our Leadership</span>
-          </nav>
+      <section className="relative bg-pcc-navy">
+        <div className="relative mx-auto max-w-4xl px-4 pt-8 sm:px-6 lg:px-8">
+          <Breadcrumb items={[{ label: 'About', href: '/about' }, { label: 'Our Leadership' }]} />
+        </div>
+        <div className="relative mx-auto max-w-4xl px-4 pb-20 pt-8 text-center sm:px-6 lg:px-8">
           <h1
             className="text-4xl font-bold tracking-tight text-white sm:text-5xl"
             style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}

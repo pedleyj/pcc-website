@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { PlayCircleIcon, SpeakerWaveIcon } from '@heroicons/react/24/outline'
 
 const SPEEDS = [1, 1.25, 1.5, 2] as const
@@ -18,13 +18,14 @@ export function MediaPlayer({
   const hasAudio = !!audioUrl
   const hasBoth = hasVideo && hasAudio
 
-  const [mode, setMode] = useState<'video' | 'audio'>(() => {
-    if (!hasBoth) return hasVideo ? 'video' : 'audio'
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('pcc-media-pref') as 'video' | 'audio') || 'video'
-    }
-    return 'video'
-  })
+  const [mode, setMode] = useState<'video' | 'audio'>(hasVideo ? 'video' : 'audio')
+
+  // Restore preference from localStorage after hydration
+  useEffect(() => {
+    if (!hasBoth) return
+    const saved = localStorage.getItem('pcc-media-pref') as 'video' | 'audio' | null
+    if (saved === 'video' || saved === 'audio') setMode(saved)
+  }, [hasBoth])
   const [speed, setSpeed] = useState(1)
   const audioRef = useRef<HTMLAudioElement>(null)
 

@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { format } from 'date-fns'
 import {
-  ChevronRightIcon,
   CalendarDaysIcon,
   ClockIcon,
   MapPinIcon,
@@ -13,6 +12,7 @@ import {
   StarIcon,
 } from '@heroicons/react/24/outline'
 import { getEventById } from '@/lib/db/queries'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
 
 export const revalidate = 60
 
@@ -102,13 +102,7 @@ export default async function EventDetailPage({
       {/* Hero */}
       <section className="relative bg-pcc-navy">
         <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-          <nav className="mb-8 flex items-center gap-1 text-sm text-white/70" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <ChevronRightIcon className="h-3 w-3" aria-hidden="true" />
-            <Link href="/events" className="hover:text-white transition-colors">Events</Link>
-            <ChevronRightIcon className="h-3 w-3" aria-hidden="true" />
-            <span className="text-white truncate">{event.title}</span>
-          </nav>
+          <Breadcrumb items={[{ label: 'Events', href: '/events' }, { label: event.title }]} />
 
           <div className="flex flex-wrap items-center gap-2">
             <span className={`rounded-full px-3 py-1 text-xs font-semibold ${catColor}`}>

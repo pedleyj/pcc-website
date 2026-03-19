@@ -11,9 +11,9 @@ import {
   EnvelopeIcon,
   PhoneIcon,
   ArrowTopRightOnSquareIcon,
-  ChevronRightIcon,
 } from '@heroicons/react/24/outline'
 import { getSupportResourcesByCategory, getAllSupportResources } from '@/lib/db/queries'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
 
 export const revalidate = 60
 
@@ -150,20 +150,11 @@ export default async function SupportResourcePage({
   return (
     <>
       {/* Hero */}
-      <section className="relative flex min-h-[40vh] items-center justify-center bg-pcc-navy">
-        <div className="relative mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
-          {/* Breadcrumb */}
-          <nav className="mb-8 flex items-center justify-center gap-1 text-sm text-white/70" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-white transition-colors">
-              Home
-            </Link>
-            <ChevronRightIcon className="h-3 w-3" aria-hidden="true" />
-            <Link href="/support" className="hover:text-white transition-colors">
-              Support
-            </Link>
-            <ChevronRightIcon className="h-3 w-3" aria-hidden="true" />
-            <span className="text-white">{resource.title}</span>
-          </nav>
+      <section className="relative bg-pcc-navy">
+        <div className="relative mx-auto max-w-4xl px-4 pt-8 sm:px-6 lg:px-8">
+          <Breadcrumb items={[{ label: 'Support', href: '/support' }, { label: resource.title }]} />
+        </div>
+        <div className="relative mx-auto max-w-4xl px-4 pb-20 pt-8 text-center sm:px-6 lg:px-8">
 
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white/20">
             <Icon className="h-8 w-8 text-white" aria-hidden="true" />

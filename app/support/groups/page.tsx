@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import {
-  ChevronRightIcon,
   HeartIcon,
   UsersIcon,
   ShieldCheckIcon,
@@ -11,6 +10,7 @@ import {
   ArrowTopRightOnSquareIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
 
 export const metadata: Metadata = {
   title: 'Support Groups | Peninsula Covenant Church',
@@ -113,15 +113,11 @@ export default function SupportGroupsPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative flex min-h-[40vh] items-center justify-center bg-pcc-navy">
-        <div className="relative mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
-          <nav className="mb-8 flex items-center justify-center gap-1 text-sm text-white/70" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <ChevronRightIcon className="h-3 w-3" aria-hidden="true" />
-            <Link href="/support" className="hover:text-white transition-colors">Support</Link>
-            <ChevronRightIcon className="h-3 w-3" aria-hidden="true" />
-            <span className="text-white">Support Groups</span>
-          </nav>
+      <section className="relative bg-pcc-navy">
+        <div className="relative mx-auto max-w-4xl px-4 pt-8 sm:px-6 lg:px-8">
+          <Breadcrumb items={[{ label: 'Support', href: '/support' }, { label: 'Support Groups' }]} />
+        </div>
+        <div className="relative mx-auto max-w-4xl px-4 pb-20 pt-8 sm:px-6 lg:px-8">
           <h1
             className="text-center text-4xl font-bold tracking-tight text-white sm:text-5xl"
             style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}

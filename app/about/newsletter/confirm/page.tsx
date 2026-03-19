@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { Suspense } from 'react'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
 
 function ConfirmContent() {
   const searchParams = useSearchParams()
@@ -13,8 +14,11 @@ function ConfirmContent() {
 
   return (
     <>
-      <section className="relative flex min-h-[40vh] items-center justify-center bg-pcc-navy">
-        <div className="relative mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
+      <section className="relative bg-pcc-navy">
+        <div className="relative mx-auto max-w-4xl px-4 pt-8 sm:px-6 lg:px-8">
+          <Breadcrumb items={[{ label: 'About', href: '/about' }, { label: 'Newsletter', href: '/about/newsletter' }, { label: 'Confirm' }]} />
+        </div>
+        <div className="relative mx-auto max-w-4xl px-4 pb-20 pt-8 text-center sm:px-6 lg:px-8">
           <h1
             className="text-4xl font-bold tracking-tight text-white sm:text-5xl"
             style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}
