@@ -55,9 +55,9 @@ export function HeroCarousel() {
         </div>
       ))}
 
-      {/* Subtle vignette — lighter on mobile where content is more compressed */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.2)_0%,rgba(0,0,0,0.05)_60%,transparent_100%)] sm:bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.35)_0%,rgba(0,0,0,0.1)_60%,transparent_100%)]" />
-      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/20 to-transparent sm:from-black/30" />
+      {/* Subtle vignette — hidden on mobile, visible on larger screens */}
+      <div className="absolute inset-0 hidden sm:block bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.35)_0%,rgba(0,0,0,0.1)_60%,transparent_100%)]" />
+      <div className="absolute inset-x-0 bottom-0 h-1/3 hidden sm:block bg-gradient-to-t from-black/30 to-transparent" />
 
       {/* Hero Content */}
       <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
