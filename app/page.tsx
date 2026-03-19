@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import Image from 'next/image'
-import { CalendarDaysIcon, ClockIcon, MapPinIcon, UserGroupIcon, PlayCircleIcon, BookOpenIcon, ArrowRightIcon, StarIcon } from '@heroicons/react/24/outline'
+import { CalendarDaysIcon, ClockIcon, MapPinIcon, UserGroupIcon, PlayCircleIcon, BookOpenIcon, ArrowRightIcon, StarIcon, HandRaisedIcon } from '@heroicons/react/24/outline'
 import { HeroCarousel } from '@/components/home/hero-carousel'
-import { getSiteSettings, getLatestMessages, getUpcomingEvents, getCurrentAlphaSession, getActiveMinistries } from '@/lib/db/queries'
+import { getSiteSettings, getLatestMessages, getUpcomingEvents, getCurrentAlphaSession } from '@/lib/db/queries'
 
 export const revalidate = 60
 
@@ -14,12 +14,11 @@ export const metadata: Metadata = {
 }
 
 export default async function Home() {
-  const [siteSettings, messages, events, alphaSession, ministries] = await Promise.all([
+  const [siteSettings, messages, events, alphaSession] = await Promise.all([
     getSiteSettings(),
     getLatestMessages(),
     getUpcomingEvents(),
     getCurrentAlphaSession(),
-    getActiveMinistries(),
   ])
 
   return (
@@ -361,76 +360,60 @@ export default async function Home() {
         </section>
       )}
 
-      {/* Ministries Section */}
-      {ministries.length > 0 && (
-        <section className="bg-white">
-          <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <h2 className="text-3xl font-bold text-pcc-navy sm:text-4xl">
-                Connect &amp; Grow
-              </h2>
-              <p className="mt-3 text-lg text-pcc-slate">
-                Find your place in community
-              </p>
-            </div>
-
-            <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {ministries.slice(0, 6).map((ministry) => {
-                const categoryColors: Record<string, string> = {
-                  outreach: 'bg-pcc-emerald',
-                  kids: 'bg-pcc-gold',
-                  youth: 'bg-pcc-orange',
-                  adults: 'bg-pcc-teal',
-                  worship: 'bg-pcc-navy',
-                }
-                const circleClass = categoryColors[ministry.category] || 'bg-pcc-teal'
-
-                return (
-                  <div
-                    key={ministry.id}
-                    className="group rounded-xl border border-pcc-cream-dark p-6 transition-all hover:shadow-lg hover:-translate-y-1"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-xl font-bold text-white ${circleClass}`}>
-                        {ministry.name.charAt(0)}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
-                          {ministry.name}
-                        </h3>
-                        <p className="mt-2 text-sm leading-relaxed text-pcc-slate">
-                          {ministry.description}
-                        </p>
-                        {ministry.leader && (
-                          <p className="mt-2 text-xs text-pcc-charcoal">
-                            Led by {ministry.leader}
-                          </p>
-                        )}
-                        <Link
-                          href={`/ministries#${ministry.category}`}
-                          className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-pcc-teal hover:text-pcc-teal-dark transition-colors"
-                        >
-                          Learn More
-                          <ArrowRightIcon className="h-4 w-4" />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-
-            <div className="mt-12 text-center">
-              <Link
-                href="/connect/ministries"
-                className="inline-block rounded-lg bg-pcc-teal px-8 py-3 text-lg font-semibold text-white hover:bg-pcc-teal-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
-              >
-                Explore All Ministries
-              </Link>
-            </div>
+      {/* Promotional Spotlight — update this section with timely content */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-pcc-navy sm:text-4xl">
+              Connect &amp; Grow
+            </h2>
+            <p className="mt-3 text-lg text-pcc-slate">
+              Find your place in community
+            </p>
           </div>
-        </section>
-      )}
+
+          <div className="mt-12 grid gap-8 sm:grid-cols-3">
+            <Link
+              href="/connect/groups"
+              className="group rounded-xl bg-pcc-cream-light p-8 text-center shadow-md transition-all hover:shadow-xl hover:-translate-y-1"
+            >
+              <UserGroupIcon className="mx-auto h-10 w-10 text-pcc-teal" aria-hidden="true" />
+              <h3 className="mt-4 text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                Small Groups
+              </h3>
+              <p className="mt-2 text-sm text-pcc-slate">
+                Life is better together. Find a group where you can build genuine friendships and grow in faith.
+              </p>
+            </Link>
+
+            <Link
+              href="/connect/serve"
+              className="group rounded-xl bg-pcc-cream-light p-8 text-center shadow-md transition-all hover:shadow-xl hover:-translate-y-1"
+            >
+              <HandRaisedIcon className="mx-auto h-10 w-10 text-pcc-teal" aria-hidden="true" />
+              <h3 className="mt-4 text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                Get Involved
+              </h3>
+              <p className="mt-2 text-sm text-pcc-slate">
+                Explore our ministries and find ways to serve. There&apos;s a place for everyone at PCC.
+              </p>
+            </Link>
+
+            <Link
+              href="/about/community"
+              className="group rounded-xl bg-pcc-cream-light p-8 text-center shadow-md transition-all hover:shadow-xl hover:-translate-y-1"
+            >
+              <CalendarDaysIcon className="mx-auto h-10 w-10 text-pcc-teal" aria-hidden="true" />
+              <h3 className="mt-4 text-lg font-bold text-pcc-navy group-hover:text-pcc-teal transition-colors">
+                Community Programs
+              </h3>
+              <p className="mt-2 text-sm text-pcc-slate">
+                Preschool, Community Center, and after-school care serving families across the peninsula.
+              </p>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Giving Section */}
       <section className="bg-pcc-sage/15">

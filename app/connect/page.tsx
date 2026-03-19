@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import {
   UserGroupIcon,
-  HeartIcon,
   HandRaisedIcon,
   ArrowTopRightOnSquareIcon,
 } from '@heroicons/react/24/outline'
@@ -10,7 +9,7 @@ import {
 export const metadata: Metadata = {
   title: 'Connect | Peninsula Covenant Church',
   description:
-    'Find your place in community at PCC. Join a small group, serve, or explore our ministries.',
+    'Find your place in community at PCC. Join a small group, serve, or get involved in a ministry.',
 }
 
 const cards = [
@@ -23,17 +22,9 @@ const cards = [
     external: false,
   },
   {
-    title: 'Ministries',
+    title: 'Get Involved',
     description:
-      'From kids to seniors, we have vibrant ministries for every age and stage of life.',
-    href: '/connect/ministries',
-    icon: HeartIcon,
-    external: false,
-  },
-  {
-    title: 'Serve Opportunities',
-    description:
-      'Use your gifts to make a difference. There are many ways to serve at PCC and in our community.',
+      'Explore our ministries and find ways to serve. From kids to seniors, there\'s a place for everyone.',
     href: '/connect/serve',
     icon: HandRaisedIcon,
     external: false,

@@ -81,7 +81,12 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/ministries',
-        destination: '/connect/ministries',
+        destination: '/connect/serve',
+        permanent: true,
+      },
+      {
+        source: '/connect/ministries',
+        destination: '/connect/serve',
         permanent: true,
       },
     ]

@@ -23,8 +23,7 @@ const dropdowns = {
     href: '/connect',
     items: [
       { name: 'Small Groups', href: '/connect/groups' },
-      { name: 'Ministries', href: '/connect/ministries' },
-      { name: 'Serve Opportunities', href: '/connect/serve' },
+      { name: 'Get Involved', href: '/connect/serve' },
       { name: 'Member Login', href: 'https://pcc.churchcenter.com' },
     ],
   },
