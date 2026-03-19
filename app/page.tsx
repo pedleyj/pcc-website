@@ -28,7 +28,7 @@ export default async function Home() {
 
       {/* Alpha Feature Section */}
       {alphaSession && (
-        <section id="alpha" className="border-t-4 border-pcc-emerald bg-pcc-emerald/10 scroll-mt-16">
+        <section id="alpha" className="relative border-t-4 border-pcc-emerald bg-[#edf5f0] scroll-mt-16">
           <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
             <div className="text-center">
               <h2 className="text-3xl font-bold text-pcc-navy sm:text-4xl md:text-5xl">
