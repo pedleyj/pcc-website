@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import {
   SparklesIcon,
   HeartIcon,
@@ -96,7 +96,7 @@ function GroupCard({ group, onSelect }: { group: SmallGroup; onSelect: () => voi
         >
           Details
         </button>
-        {group.openForSignup && !isFull && group.churchCenterUrl && (
+        {group.openForSignup && !isFull && group.churchCenterUrl?.startsWith('https://') && (
           <a
             href={group.churchCenterUrl}
             target="_blank"
@@ -117,11 +117,49 @@ function GroupDetail({ group, onClose }: { group: SmallGroup; onClose: () => voi
   const isGrowth = group.type === 'growth'
   const spotsRemaining = group.capacity ? group.capacity - group.currentMembers : null
   const isFull = spotsRemaining !== null && spotsRemaining <= 0
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  // Focus trap and Escape key
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (!dialog) return
+
+    // Focus the close button on mount
+    const closeBtn = dialog.querySelector<HTMLElement>('[aria-label="Close"]')
+    closeBtn?.focus()
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key !== 'Tab' || !dialog) return
+
+      const focusable = dialog.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusable.length === 0) return
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label={group.name}>
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
-      <div className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl sm:p-8">
+      <div ref={dialogRef} className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl sm:p-8">
         <button
           type="button"
           onClick={onClose}
@@ -162,7 +200,7 @@ function GroupDetail({ group, onClose }: { group: SmallGroup; onClose: () => voi
               {ageLabels[group.ageGroup] || group.ageGroup}
             </p>
           )}
-          {group.capacity && (
+          {group.capacity != null && (
             <p className="text-sm text-pcc-charcoal">
               Capacity: {group.currentMembers}/{group.capacity}
               {spotsRemaining !== null && spotsRemaining > 0 && (
@@ -174,7 +212,7 @@ function GroupDetail({ group, onClose }: { group: SmallGroup; onClose: () => voi
         </div>
 
         <div className="mt-6 flex gap-3">
-          {group.openForSignup && !isFull && group.churchCenterUrl && (
+          {group.openForSignup && !isFull && group.churchCenterUrl?.startsWith('https://') && (
             <a
               href={group.churchCenterUrl}
               target="_blank"
@@ -287,6 +325,7 @@ export function GroupsBrowser({ groups }: { groups: SmallGroup[] }) {
               <button
                 key={t}
                 type="button"
+                aria-pressed={selectedType === t}
                 onClick={() => setSelectedType(selectedType === t ? '' : t)}
                 className={`rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors ${
                   selectedType === t ? 'bg-pcc-navy text-white' : t === 'growth' ? 'bg-pcc-teal/15 text-pcc-teal hover:opacity-80' : 'bg-pcc-gold/20 text-pcc-gold-dark hover:opacity-80'

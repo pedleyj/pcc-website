@@ -23,15 +23,19 @@ export function MediaPlayer({
   // Restore preference from localStorage after hydration
   useEffect(() => {
     if (!hasBoth) return
-    const saved = localStorage.getItem('pcc-media-pref') as 'video' | 'audio' | null
-    if (saved === 'video' || saved === 'audio') setMode(saved)
+    try {
+      const saved = localStorage.getItem('pcc-media-pref') as 'video' | 'audio' | null
+      if (saved === 'video' || saved === 'audio') setMode(saved)
+    } catch {
+      // localStorage unavailable (Safari private mode, embedded contexts)
+    }
   }, [hasBoth])
   const [speed, setSpeed] = useState(1)
   const audioRef = useRef<HTMLAudioElement>(null)
 
   const handleModeChange = useCallback((newMode: 'video' | 'audio') => {
     setMode(newMode)
-    localStorage.setItem('pcc-media-pref', newMode)
+    try { localStorage.setItem('pcc-media-pref', newMode) } catch { /* unavailable */ }
   }, [])
 
   const handleSpeed = useCallback((s: number) => {
@@ -45,8 +49,10 @@ export function MediaPlayer({
     <div className="mb-10">
       {/* Toggle tabs */}
       {hasBoth && (
-        <div className="mb-3 flex gap-2">
+        <div className="mb-3 flex gap-2" role="tablist" aria-label="Media format">
           <button
+            role="tab"
+            aria-selected={mode === 'video'}
             onClick={() => handleModeChange('video')}
             className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
               mode === 'video'
@@ -58,6 +64,8 @@ export function MediaPlayer({
             Watch
           </button>
           <button
+            role="tab"
+            aria-selected={mode === 'audio'}
             onClick={() => handleModeChange('audio')}
             className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
               mode === 'audio'
@@ -72,7 +80,7 @@ export function MediaPlayer({
       )}
 
       {/* Video */}
-      {mode === 'video' && videoEmbedUrl && (
+      {mode === 'video' && videoEmbedUrl && /^https:\/\/(www\.)?youtube(-nocookie)?\.com\/embed\//.test(videoEmbedUrl) && (
         <div className="overflow-hidden rounded-2xl shadow-lg">
           <div className="relative aspect-video">
             <iframe
@@ -80,6 +88,7 @@ export function MediaPlayer({
               title={title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
+              sandbox="allow-scripts allow-same-origin allow-presentation"
               className="absolute inset-0 h-full w-full"
               loading="lazy"
             />
@@ -100,7 +109,7 @@ export function MediaPlayer({
             className="w-full"
             preload="metadata"
           >
-            <source src={audioUrl} />
+            <source src={audioUrl} type="audio/mpeg" />
             Your browser does not support the audio element.
           </audio>
           <div className="mt-3 flex items-center gap-2">

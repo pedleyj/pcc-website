@@ -7,36 +7,14 @@
  * 3. wearepcc.com → Beyond Sunday PDFs (checked by URL pattern)
  */
 
-const PC_APP_ID = process.env.PLANNING_CENTER_APP_ID!
-const PC_SECRET = process.env.PLANNING_CENTER_SECRET!
+import { pcFetch as pcFetchBase, type PCResponse } from './planning-center-auth'
+
 const PC_BASE = 'https://api.planningcenteronline.com/services/v2'
 const SERVICE_TYPE_ID = '1196940' // "Sunday Services"
 const YOUTUBE_CHANNEL_ID = 'UClW28QqJpYnfhv6dJ2JCJbA'
 
-type PCResource = {
-  type: string
-  id: string
-  attributes: Record<string, unknown>
-  relationships?: Record<string, { data: { type: string; id: string } | null }>
-}
-
-type PCResponse = {
-  data: PCResource[]
-  included?: PCResource[]
-  meta: { total_count: number }
-  links: { next?: string }
-}
-
 async function pcFetch(path: string): Promise<PCResponse> {
-  const res = await fetch(`${PC_BASE}${path}`, {
-    headers: {
-      Authorization: 'Basic ' + Buffer.from(`${PC_APP_ID}:${PC_SECRET}`).toString('base64'),
-      Accept: 'application/json',
-    },
-    cache: 'no-store',
-  })
-  if (!res.ok) throw new Error(`PC API error: ${res.status}`)
-  return res.json() as Promise<PCResponse>
+  return pcFetchBase(PC_BASE, path)
 }
 
 // --- YouTube search via Data API ---
@@ -46,6 +24,7 @@ const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || ''
 async function searchYouTubeVideo(sermonTitle: string, sermonDate: string): Promise<string | null> {
   if (!YOUTUBE_API_KEY) return fallbackRssMatch(sermonTitle, sermonDate)
 
+  // Convert "2026-03-15" → "3.15.26" (format used in YouTube video titles)
   const dateShort = sermonDate.replace(/^20(\d\d)-0?(\d+)-0?(\d+)$/, '$2.$3.$1')
 
   // Search for "Message Only" version first (cleaner cut)
@@ -95,7 +74,8 @@ async function fallbackRssMatch(sermonTitle: string, sermonDate: string): Promis
     if (!res.ok) return null
     const xml = await res.text()
     const entries = xml.match(/<entry>[\s\S]*?<\/entry>/g) || []
-    const dateShort = sermonDate.replace(/^20(\d\d)-0?(\d+)-0?(\d+)$/, '$2.$3.$1')
+    // Convert "2026-03-15" → "3.15.26" (format used in YouTube video titles)
+  const dateShort = sermonDate.replace(/^20(\d\d)-0?(\d+)-0?(\d+)$/, '$2.$3.$1')
 
     for (const e of entries) {
       const title = (e.match(/<title>(.*?)<\/title>/)?.[1] || '').replace(/&amp;/g, '&').replace(/&#39;/g, "'")
@@ -132,7 +112,7 @@ async function checkBeyondSundayUrl(date: string, seriesSlug: string): Promise<s
 }
 
 function slugify(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, '').replace(/\s+/g, '')
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 }
 
 // --- Main export ---
@@ -162,51 +142,49 @@ export async function fetchMessagesFromPC(limit = 20): Promise<SyncedMessage[]> 
     }
   }
 
-  const messages: SyncedMessage[] = []
+  // Process all plans in parallel (speaker, YouTube, PDF lookups concurrently per plan)
+  const messages = await Promise.all(
+    plansRes.data
+      .filter((plan) => plan.attributes.sort_date)
+      .map(async (plan): Promise<SyncedMessage> => {
+        const title = (plan.attributes.title as string) || 'Sunday Message'
+        const sortDate = plan.attributes.sort_date as string
+        const date = sortDate.slice(0, 10)
+        const seriesTitle = plan.attributes.series_title as string | null
+        const seriesRef = plan.relationships?.series?.data
+        const seriesData = seriesRef && !Array.isArray(seriesRef) ? seriesMap.get(seriesRef.id) : null
+        const seriesSlug = seriesTitle ? slugify(seriesTitle) : null
 
-  for (const plan of plansRes.data) {
-    const title = (plan.attributes.title as string) || 'Sunday Message'
-    const sortDate = plan.attributes.sort_date as string
-    if (!sortDate) continue
-    const date = sortDate.slice(0, 10)
-    const seriesTitle = plan.attributes.series_title as string | null
-    const seriesRef = plan.relationships?.series?.data
-    const seriesData = seriesRef ? seriesMap.get(seriesRef.id) : null
+        // Run speaker lookup, YouTube match, and PDF check in parallel
+        const [speaker, videoUrl, beyondSundayUrl] = await Promise.all([
+          // Speaker from team members
+          pcFetch(`/service_types/${SERVICE_TYPE_ID}/plans/${plan.id}/team_members?per_page=50`)
+            .then((teamRes) => {
+              const speakerPositions = ['teach', 'preach', 'speaker', 'sermon', 'message', 'pastor']
+              const preacher = teamRes.data.find((m) => {
+                const pos = (m.attributes.team_position_name as string || '').toLowerCase()
+                return speakerPositions.some((kw) => pos.includes(kw))
+              })
+              return preacher ? (preacher.attributes.name as string) : 'PCC Staff'
+            })
+            .catch(() => 'PCC Staff'),
+          // YouTube video
+          searchYouTubeVideo(title, date),
+          // Beyond Sunday PDF
+          seriesSlug ? checkBeyondSundayUrl(date, seriesSlug) : Promise.resolve(null),
+        ])
 
-    // Get speaker from team members
-    let speaker = 'PCC Staff'
-    try {
-      const teamRes = await pcFetch(
-        `/service_types/${SERVICE_TYPE_ID}/plans/${plan.id}/team_members?per_page=50`
-      )
-      const preacher = teamRes.data.find(
-        (m) => {
-          const pos = (m.attributes.team_position_name as string || '').toLowerCase()
-          return pos.includes('teach') || pos.includes('preach') || pos.includes('speaker') || pos.includes('sermon') || pos.includes('message') || pos.includes('pastor')
+        return {
+          title,
+          speaker,
+          date: new Date(sortDate),
+          series: seriesTitle,
+          seriesArt: seriesData?.art || null,
+          videoUrl,
+          beyondSundayUrl,
         }
-      )
-      if (preacher) speaker = preacher.attributes.name as string
-    } catch {
-      // keep default
-    }
-
-    // Match YouTube video
-    const videoUrl = await searchYouTubeVideo(title, date)
-
-    // Check for Beyond Sunday PDF
-    const seriesSlug = seriesTitle ? slugify(seriesTitle) : null
-    const beyondSundayUrl = seriesSlug ? await checkBeyondSundayUrl(date, seriesSlug) : null
-
-    messages.push({
-      title,
-      speaker,
-      date: new Date(sortDate),
-      series: seriesTitle,
-      seriesArt: seriesData?.art || null,
-      videoUrl,
-      beyondSundayUrl,
-    })
-  }
+      })
+  )
 
   return messages
 }

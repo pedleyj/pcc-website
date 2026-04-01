@@ -18,6 +18,7 @@ export async function getMessageById(id: string) {
   })
 }
 
+// Paginated message list with optional series/speaker/tag filters
 export async function getAllMessages(options?: {
   series?: string
   speaker?: string
@@ -45,7 +46,7 @@ export async function getAllMessages(options?: {
     prisma.message.count({ where }),
   ])
 
-  return { messages, total, page, pageSize, totalPages: Math.ceil(total / pageSize) }
+  return { messages, total, page, pageSize, totalPages: pageSize > 0 ? Math.ceil(total / pageSize) : 0 }
 }
 
 export async function getMessagesBySeries(series: string, excludeId?: string) {
@@ -58,6 +59,7 @@ export async function getMessagesBySeries(series: string, excludeId?: string) {
   })
 }
 
+// Returns prev/next messages in the same series for navigation arrows
 export async function getSeriesNavigation(series: string, currentDate: Date, currentId: string) {
   const [prev, next] = await Promise.all([
     prisma.message.findFirst({
@@ -75,13 +77,21 @@ export async function getSeriesNavigation(series: string, currentDate: Date, cur
 }
 
 export async function incrementViewCount(id: string) {
-  return prisma.message.update({
-    where: { id },
-    data: { viewCount: { increment: 1 } },
-    select: { viewCount: true },
-  })
+  try {
+    return await prisma.message.update({
+      where: { id },
+      data: { viewCount: { increment: 1 } },
+      select: { viewCount: true },
+    })
+  } catch (e: unknown) {
+    if (typeof e === 'object' && e !== null && 'code' in e && (e as { code: string }).code === 'P2025') {
+      return null
+    }
+    throw e
+  }
 }
 
+// Returns unique series names from messages (for filter dropdowns)
 export async function getDistinctSeries() {
   const results = await prisma.message.findMany({
     where: { series: { not: null } },
@@ -89,7 +99,7 @@ export async function getDistinctSeries() {
     distinct: ['series'],
     orderBy: { date: 'desc' },
   })
-  return results.map((r) => r.series!).filter(Boolean)
+  return results.map((r) => r.series!)
 }
 
 export async function getDistinctSpeakers() {
@@ -101,6 +111,7 @@ export async function getDistinctSpeakers() {
   return results.map((r) => r.speaker)
 }
 
+// Future events sorted by featured first, then date
 export async function getUpcomingEvents(limit = 3) {
   return prisma.event.findMany({
     where: {
@@ -136,14 +147,32 @@ export async function getDistinctEventCategories() {
   return results.map((r) => r.category)
 }
 
+// Returns the session currently in its registration window:
+// 6 weeks before startDate through 3 weeks after startDate
 export async function getCurrentAlphaSession() {
-  const fourWeeksAgo = new Date()
-  fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28)
+  const now = new Date()
+  const sixWeeksFromNow = new Date(now)
+  sixWeeksFromNow.setDate(sixWeeksFromNow.getDate() + 42)
+  const threeWeeksAgo = new Date(now)
+  threeWeeksAgo.setDate(threeWeeksAgo.getDate() - 21)
 
   return prisma.alphaSession.findFirst({
     where: {
       registrationOpen: true,
-      startDate: { gte: fourWeeksAgo },
+      startDate: {
+        gte: threeWeeksAgo,
+        lte: sixWeeksFromNow,
+      },
+    },
+    orderBy: { startDate: 'asc' },
+  })
+}
+
+// Returns the next future session (for "Alpha returns..." messaging)
+export async function getNextAlphaSession() {
+  return prisma.alphaSession.findFirst({
+    where: {
+      startDate: { gt: new Date() },
     },
     orderBy: { startDate: 'asc' },
   })
@@ -234,7 +263,14 @@ export async function createNewsletterSubscriber(data: {
   email: string
   firstName?: string
 }) {
-  return prisma.newsletterSubscriber.create({ data })
+  try {
+    return await prisma.newsletterSubscriber.create({ data })
+  } catch (e: unknown) {
+    if (typeof e === 'object' && e !== null && 'code' in e && (e as { code: string }).code === 'P2002') {
+      return null // duplicate email
+    }
+    throw e
+  }
 }
 
 export async function getNewsletterSubscriberByEmail(email: string) {
@@ -242,17 +278,31 @@ export async function getNewsletterSubscriberByEmail(email: string) {
 }
 
 export async function confirmNewsletterSubscriber(confirmToken: string) {
-  return prisma.newsletterSubscriber.update({
-    where: { confirmToken },
-    data: { status: 'confirmed', confirmedAt: new Date() },
-  })
+  try {
+    return await prisma.newsletterSubscriber.update({
+      where: { confirmToken },
+      data: { status: 'confirmed', confirmedAt: new Date() },
+    })
+  } catch (e: unknown) {
+    if (typeof e === 'object' && e !== null && 'code' in e && (e as { code: string }).code === 'P2025') {
+      return null
+    }
+    throw e
+  }
 }
 
 export async function unsubscribeNewsletter(unsubToken: string) {
-  return prisma.newsletterSubscriber.update({
-    where: { unsubToken },
-    data: { status: 'unsubscribed', unsubscribedAt: new Date() },
-  })
+  try {
+    return await prisma.newsletterSubscriber.update({
+      where: { unsubToken },
+      data: { status: 'unsubscribed', unsubscribedAt: new Date() },
+    })
+  } catch (e: unknown) {
+    if (typeof e === 'object' && e !== null && 'code' in e && (e as { code: string }).code === 'P2025') {
+      return null
+    }
+    throw e
+  }
 }
 
 export async function getNewsletterSubscriberByUnsubToken(unsubToken: string) {
@@ -270,5 +320,48 @@ export async function getPublicPrayerRequests(limit = 15) {
       request: true,
       createdAt: true,
     },
+  })
+}
+
+// Alpha Interest
+export async function createAlphaInterest(data: {
+  email: string
+  firstName?: string
+  sessionId?: string
+}) {
+  try {
+    return await prisma.alphaInterest.create({ data })
+  } catch (e: unknown) {
+    if (typeof e === 'object' && e !== null && 'code' in e && (e as { code: string }).code === 'P2002') {
+      return null // duplicate email+session
+    }
+    throw e
+  }
+}
+
+export async function getAlphaInterestByEmail(email: string, sessionId?: string) {
+  return prisma.alphaInterest.findFirst({
+    where: {
+      email,
+      sessionId: sessionId ?? null,
+    },
+  })
+}
+
+export async function getUnnotifiedAlphaInterests(sessionId?: string) {
+  return prisma.alphaInterest.findMany({
+    where: {
+      notifiedAt: null,
+      ...(sessionId
+        ? { OR: [{ sessionId }, { sessionId: null }] }
+        : { sessionId: null }),
+    },
+  })
+}
+
+export async function markAlphaInterestsNotified(ids: string[]) {
+  return prisma.alphaInterest.updateMany({
+    where: { id: { in: ids } },
+    data: { notifiedAt: new Date() },
   })
 }

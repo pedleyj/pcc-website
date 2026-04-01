@@ -5,15 +5,18 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('Starting seed...')
 
-  // Clear existing data
-  await prisma.messageResource.deleteMany()
-  await prisma.staffMember.deleteMany()
-  await prisma.smallGroup.deleteMany()
-  await prisma.supportResource.deleteMany()
-  await prisma.ministry.deleteMany()
-  await prisma.event.deleteMany()
-  await prisma.message.deleteMany()
-  await prisma.alphaSession.deleteMany()
+  // Clear existing data (transactional to avoid partial state)
+  await prisma.$transaction([
+    prisma.messageResource.deleteMany(),
+    prisma.alphaInterest.deleteMany(),
+    prisma.staffMember.deleteMany(),
+    prisma.smallGroup.deleteMany(),
+    prisma.supportResource.deleteMany(),
+    prisma.ministry.deleteMany(),
+    prisma.event.deleteMany(),
+    prisma.message.deleteMany(),
+    prisma.alphaSession.deleteMany(),
+  ])
   console.log('Cleared existing data.')
 
   // Site Settings
@@ -105,8 +108,6 @@ async function main() {
   }
 
   // Message Resources
-  await prisma.messageResource.deleteMany()
-
   const msg1Id = createdMessages["God's Heart for the World"]
   const msg2Id = createdMessages["Don't be Fooled"]
   const msg3Id = createdMessages["The Thermostat (Who is King)"]

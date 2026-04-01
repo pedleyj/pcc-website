@@ -1,48 +1,13 @@
 /**
  * Planning Center Calendar API client.
- * Uses Personal Access Token (HTTP Basic Auth).
  */
 
-const PC_APP_ID = process.env.PLANNING_CENTER_APP_ID!
-const PC_SECRET = process.env.PLANNING_CENTER_SECRET!
+import { pcFetch as pcFetchBase, type PCResource, type PCResponse } from './planning-center-auth'
+
 const BASE_URL = 'https://api.planningcenteronline.com/calendar/v2'
 
-function authHeader(): string {
-  return 'Basic ' + Buffer.from(`${PC_APP_ID}:${PC_SECRET}`).toString('base64')
-}
-
-async function pcFetch(path: string): Promise<unknown> {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    headers: {
-      Authorization: authHeader(),
-      Accept: 'application/json',
-    },
-    cache: 'no-store',
-  })
-
-  if (!res.ok) {
-    throw new Error(`Planning Center API error: ${res.status} ${res.statusText}`)
-  }
-
-  return res.json()
-}
-
-// --- Types for the PC JSON:API response ---
-
-type PCAttributes = Record<string, unknown>
-
-type PCResource = {
-  type: string
-  id: string
-  attributes: PCAttributes
-  relationships?: Record<string, { data: { type: string; id: string } | { type: string; id: string }[] | null }>
-}
-
-type PCResponse = {
-  data: PCResource[]
-  included?: PCResource[]
-  meta: { total_count: number; next?: { offset: number } }
-  links: { next?: string }
+async function pcFetch(path: string): Promise<PCResponse> {
+  return pcFetchBase(BASE_URL, path)
 }
 
 // --- Tag-to-category mapping ---
@@ -113,9 +78,9 @@ export async function fetchPCEvents(): Promise<PCEvent[]> {
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    const res = (await pcFetch(
+    const res = await pcFetch(
       `/event_instances?filter=future&per_page=${perPage}&offset=${offset}&order=starts_at&include=event,tags`
-    )) as PCResponse
+    )
 
     // Build lookup maps for included resources
     const includedMap = new Map<string, PCResource>()

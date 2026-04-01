@@ -47,7 +47,7 @@ export function FooterNewsletter() {
       <input type="hidden" name="name" value="" />
 
       {state.error && (
-        <p className="text-xs text-red-300">{state.error}</p>
+        <p className="text-xs text-red-300" role="alert">{state.error}</p>
       )}
     </form>
   )

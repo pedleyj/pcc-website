@@ -28,6 +28,10 @@ export type NewsletterData = {
   unsubscribeUrl: string
 }
 
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
 const COLORS = {
   navy: '#254b5a',
   navyDark: '#1a3a47',
@@ -89,21 +93,21 @@ export function renderNewsletter(data: NewsletterData): string {
         </table>
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top: 16px; border-radius: 8px; overflow: hidden;">
           <tr><td style="background: ${COLORS.cream}; padding: 20px; border-radius: 8px; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <p style="margin: 0 0 4px; font-size: 13px; color: ${COLORS.sage};">Fiscal Year: ${data.givingUpdate.fiscalYear}</p>
-            <p style="margin: 0 0 4px; font-size: 13px; color: ${COLORS.sage};">Budgeted Giving: ${data.givingUpdate.budgetedGiving}</p>
-            <p style="margin: 0 0 16px; font-size: 12px; color: ${COLORS.sage};">As of ${data.givingUpdate.asOfDate}</p>
+            <p style="margin: 0 0 4px; font-size: 13px; color: ${COLORS.sage};">Fiscal Year: ${escapeHtml(data.givingUpdate.fiscalYear)}</p>
+            <p style="margin: 0 0 4px; font-size: 13px; color: ${COLORS.sage};">Budgeted Giving: ${escapeHtml(data.givingUpdate.budgetedGiving)}</p>
+            <p style="margin: 0 0 16px; font-size: 12px; color: ${COLORS.sage};">As of ${escapeHtml(data.givingUpdate.asOfDate)}</p>
             <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
               <tr>
                 <td style="padding: 8px 0; font-size: 14px; color: ${COLORS.slate};">Expected Giving to Date</td>
-                <td align="right" style="padding: 8px 0; font-size: 14px; font-weight: 600; color: ${COLORS.navy};">${data.givingUpdate.expectedToDate}</td>
+                <td align="right" style="padding: 8px 0; font-size: 14px; font-weight: 600; color: ${COLORS.navy};">${escapeHtml(data.givingUpdate.expectedToDate)}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-size: 14px; color: ${COLORS.slate};">Giving to Date</td>
-                <td align="right" style="padding: 8px 0; font-size: 14px; font-weight: 600; color: ${COLORS.teal};">${data.givingUpdate.givingToDate}</td>
+                <td align="right" style="padding: 8px 0; font-size: 14px; font-weight: 600; color: ${COLORS.teal};">${escapeHtml(data.givingUpdate.givingToDate)}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; border-top: 1px solid ${COLORS.creamDark}; font-size: 14px; color: ${COLORS.slate};">Shortfall to Date</td>
-                <td align="right" style="padding: 8px 0; border-top: 1px solid ${COLORS.creamDark}; font-size: 14px; font-weight: 600; color: #c0392b;">${data.givingUpdate.shortfall}</td>
+                <td align="right" style="padding: 8px 0; border-top: 1px solid ${COLORS.creamDark}; font-size: 14px; font-weight: 600; color: #c0392b;">${escapeHtml(data.givingUpdate.shortfall)}</td>
               </tr>
             </table>
             <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top: 16px;">
@@ -123,8 +127,8 @@ export function renderNewsletter(data: NewsletterData): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="x-apple-disable-message-reformatting">
-  <title>PCC Newsletter — ${data.date}</title>
-  ${data.preheader ? `<span style="display:none;font-size:1px;color:#faf8f5;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">${data.preheader}</span>` : ''}
+  <title>PCC Newsletter — ${escapeHtml(data.date)}</title>
+  ${data.preheader ? `<span style="display:none;font-size:1px;color:#faf8f5;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">${escapeHtml(data.preheader)}</span>` : ''}
   <!--[if mso]>
   <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
   <![endif]-->
@@ -139,7 +143,7 @@ export function renderNewsletter(data: NewsletterData): string {
         <!-- Header -->
         <tr><td style="background-color: ${COLORS.navy}; padding: 32px; text-align: center;">
           <h1 style="margin: 0; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 28px; font-weight: 700; color: ${COLORS.white}; letter-spacing: -0.5px;">Peninsula Covenant Church</h1>
-          <p style="margin: 8px 0 0; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; color: rgba(255,255,255,0.8);">${data.date}</p>
+          <p style="margin: 8px 0 0; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; color: rgba(255,255,255,0.8);">${escapeHtml(data.date)}</p>
         </td></tr>
 
         <!-- Jump links -->
@@ -169,7 +173,7 @@ export function renderNewsletter(data: NewsletterData): string {
             <a href="https://www.youtube.com/@wearepcc" style="color: ${COLORS.gold}; text-decoration: none; margin: 0 6px;">YouTube</a>
           </p>
           <p style="margin: 20px 0 0; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; color: rgba(255,255,255,0.5);">
-            <a href="${data.unsubscribeUrl}" style="color: rgba(255,255,255,0.5); text-decoration: underline;">Unsubscribe</a>
+            <a href="${escapeHtml(data.unsubscribeUrl)}" style="color: rgba(255,255,255,0.5); text-decoration: underline;">Unsubscribe</a>
           </p>
           <p style="margin: 8px 0 0; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; color: rgba(255,255,255,0.4);">&copy; ${new Date().getFullYear()} Peninsula Covenant Church. All rights reserved.</p>
         </td></tr>

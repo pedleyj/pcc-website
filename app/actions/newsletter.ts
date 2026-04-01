@@ -149,6 +149,11 @@ export async function submitNewsletterSignup(
       firstName: name || undefined,
     })
 
+    if (!subscriber) {
+      // Race condition: duplicate email inserted between check and create
+      return { success: true }
+    }
+
     // --- Send confirmation email (fire and forget) ---
     sendConfirmationEmail({
       email,

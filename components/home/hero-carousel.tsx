@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
+// Hero images sourced from wearepcc.com.
+// Update these when the WordPress site changes or new photos are added.
 const heroImages = [
   'https://wearepcc.com/wp-content/uploads/2025/12/20251123-_5290310-scaled.jpg',
   'https://wearepcc.com/wp-content/uploads/2025/12/20251207-_5290620-scaled.jpg',
@@ -35,6 +37,8 @@ export function HeroCarousel() {
       className="relative flex min-h-screen items-center justify-center overflow-hidden"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      aria-roledescription="carousel"
+      aria-label="PCC community photos"
     >
       {/* Carousel Images */}
       {heroImages.map((src, index) => (
@@ -80,12 +84,12 @@ export function HeroCarousel() {
           >
             Plan Your Visit
           </a>
-          <a
+          <Link
             href="/explore-faith/alpha"
             className="w-full rounded-lg bg-pcc-teal px-8 py-3 text-lg font-semibold text-white hover:bg-pcc-teal-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2 sm:w-auto"
           >
             Join Alpha
-          </a>
+          </Link>
           <a
             href="#messages"
             className="w-full rounded-lg border-2 border-white px-8 py-3 text-lg font-semibold text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 sm:w-auto"
@@ -95,8 +99,24 @@ export function HeroCarousel() {
         </div>
       </div>
 
-      {/* Navigation Dots */}
-      <div className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 gap-2">
+      {/* Live region for screen readers */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        Slide {current + 1} of {heroImages.length}
+      </div>
+
+      {/* Navigation Dots + Pause */}
+      <div className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2">
+        <button
+          onClick={() => setPaused((p) => !p)}
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-black/30 text-white hover:bg-black/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          aria-label={paused ? 'Play carousel' : 'Pause carousel'}
+        >
+          {paused ? (
+            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+          ) : (
+            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6zm8 0h4v16h-4z" /></svg>
+          )}
+        </button>
         {heroImages.map((_, index) => (
           <button
             key={index}

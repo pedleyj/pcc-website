@@ -10,11 +10,10 @@ import {
   HeartIcon,
   LightBulbIcon,
   ArrowPathIcon,
-  CheckCircleIcon,
-  ChevronDownIcon,
 } from '@heroicons/react/24/outline'
-import { getCurrentAlphaSession } from '@/lib/db/queries'
+import { getCurrentAlphaSession, getNextAlphaSession } from '@/lib/db/queries'
 import { Breadcrumb } from '@/components/layout/breadcrumb'
+import { AlphaInterestForm } from '@/components/alpha/alpha-interest-form'
 
 export const revalidate = 60
 
@@ -25,13 +24,24 @@ export const metadata: Metadata = {
 
 function getNextAlphaSeason() {
   const month = new Date().getMonth() // 0-indexed
-  // Feb (1) through July (6) → next is Fall; Aug (7) through Jan (0) → next is Spring
+  // Feb (1) through July (6) -> next is Fall; Aug (7) through Jan (0) -> next is Spring
   if (month >= 1 && month <= 6) return 'In The Fall'
   return 'In The Spring'
 }
 
 export default async function AlphaPage() {
-  const alphaSession = await getCurrentAlphaSession()
+  const [alphaSession, nextSession] = await Promise.all([
+    getCurrentAlphaSession(),
+    getNextAlphaSession(),
+  ])
+
+  // For "Alpha returns..." messaging: use next session if it's not the current registration session
+  const upcomingSession = nextSession && nextSession.id !== alphaSession?.id ? nextSession : null
+
+  // What season label to show when no registration is open
+  const nextSeasonLabel = upcomingSession
+    ? format(new Date(upcomingSession.startDate), 'MMMM yyyy')
+    : getNextAlphaSeason()
 
   return (
     <>
@@ -151,7 +161,7 @@ export default async function AlphaPage() {
         </div>
       </section>
 
-      {/* Registration Section */}
+      {/* Registration / Interest Section */}
       <section id="register" className="scroll-mt-16 bg-pcc-emerald/10 border-t-4 border-pcc-emerald">
         <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8">
           {alphaSession ? (
@@ -222,22 +232,21 @@ export default async function AlphaPage() {
           ) : (
             <>
               <h2 className="text-center text-3xl font-bold text-pcc-emerald sm:text-4xl">
-                Alpha Returns {getNextAlphaSeason()}
+                {upcomingSession
+                  ? `Alpha Returns ${format(new Date(upcomingSession.startDate), 'MMMM yyyy')}`
+                  : `Alpha Returns ${getNextAlphaSeason()}`}
               </h2>
-              <div className="mx-auto mt-10 max-w-2xl rounded-2xl bg-white p-8 text-center shadow-lg">
-                <p className="text-lg text-pcc-charcoal">
-                  We run Alpha twice a year — in the spring and fall. The next session is coming up{' '}
-                  {getNextAlphaSeason().toLowerCase()}.
+              <div className="mx-auto mt-10 max-w-2xl rounded-2xl bg-white p-8 shadow-lg">
+                <p className="text-lg text-pcc-charcoal text-center">
+                  We run Alpha twice a year — in the spring and fall.
+                  {upcomingSession
+                    ? ` The next session starts ${format(new Date(upcomingSession.startDate), 'MMMM d, yyyy')}.`
+                    : ` The next session is coming up ${getNextAlphaSeason().toLowerCase()}.`}
                 </p>
-                <p className="mt-4 text-pcc-slate">
-                  Want to be notified when registration opens?
+                <p className="mt-4 mb-6 text-center text-pcc-slate">
+                  Leave your name and email, and we&apos;ll let you know as soon as registration opens.
                 </p>
-                <a
-                  href="mailto:info@wearepcc.com?subject=Alpha%20Interest"
-                  className="mt-6 inline-block rounded-lg bg-pcc-emerald px-8 py-3 text-lg font-semibold text-white hover:bg-pcc-emerald-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pcc-teal focus-visible:ring-offset-2"
-                >
-                  Let Us Know You&apos;re Interested
-                </a>
+                <AlphaInterestForm sessionId={upcomingSession?.id} />
               </div>
             </>
           )}
@@ -347,7 +356,10 @@ export default async function AlphaPage() {
           ) : (
             <>
               <p className="mt-4 text-lg text-white/80">
-                Alpha returns {getNextAlphaSeason().toLowerCase()}. Let us know you&apos;re interested!
+                {upcomingSession
+                  ? `Alpha returns ${format(new Date(upcomingSession.startDate), 'MMMM d, yyyy')}.`
+                  : `Alpha returns ${getNextAlphaSeason().toLowerCase()}.`}
+                {' '}Get notified when registration opens!
               </p>
               <a
                 href="#register"

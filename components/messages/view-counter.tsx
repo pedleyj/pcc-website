@@ -18,7 +18,7 @@ export function ViewCounter({
     fired.current = true
 
     fetch(`/api/messages/${messageId}/view`, { method: 'POST' })
-      .then((r) => r.json())
+      .then((r) => { if (!r.ok) throw new Error(); return r.json() })
       .then((data: { viewCount: number }) => {
         if (data.viewCount) setCount(data.viewCount)
       })

@@ -61,6 +61,7 @@ pcc-website/
 │   ├── events/                   # Events calendar
 │   └── give/                     # Giving page
 ├── components/
+│   ├── alpha/                    # alpha-interest-form.tsx (client component)
 │   ├── layout/                   # header.tsx, footer.tsx, logo.tsx, nav-dropdown.tsx
 │   ├── home/                     # hero-carousel.tsx
 │   ├── messages/                 # filter-select.tsx (client component)
@@ -69,7 +70,7 @@ pcc-website/
 │   ├── db/                       # Prisma singleton (prisma.ts) + query functions (queries.ts)
 │   └── utils/                    # cn() helper (clsx + tailwind-merge)
 ├── prisma/
-│   ├── schema.prisma             # Database schema (9 models)
+│   ├── schema.prisma             # Database schema (10 models)
 │   └── seed.ts                   # Seed data script
 └── public/images/                # PCC logos (white + black variants)
 ```
@@ -104,11 +105,12 @@ pcc-website/
 ## DATABASE SCHEMA
 
 ### Models (Prisma v6)
-9 models total:
+10 models total:
 
 | Model | Key Fields |
 |-------|-----------|
 | **AlphaSession** | startDate, endDate, location, registrationUrl |
+| **AlphaInterest** | email, firstName, sessionId (FK→AlphaSession), notifiedAt |
 | **Message** | title, speaker, series, videoUrl, audioUrl, resourceUrl, scripture |
 | **Event** | startTime, endTime, recurring, recurrenceRule, location |
 | **Ministry** | name, description, category, contactEmail |
@@ -130,7 +132,11 @@ pcc-website/
 | `getDistinctSeries()` | Unique series for filter dropdown |
 | `getDistinctSpeakers()` | Unique speakers for filter dropdown |
 | `getUpcomingEvents(limit)` | Future events |
-| `getCurrentAlphaSession()` | Active session (up to 4 weeks after start) |
+| `getCurrentAlphaSession()` | Session in registration window (6wk before → 3wk after start) |
+| `getNextAlphaSession()` | Next future session (for "Alpha returns..." messaging) |
+| `createAlphaInterest(data)` | Submit interest (returns null on duplicate email+session) |
+| `getUnnotifiedAlphaInterests(sessionId?)` | Interests not yet emailed |
+| `markAlphaInterestsNotified(ids)` | Mark interests as emailed |
 | `getActiveMinistries()` | Active ministries |
 | `getLeadershipTeam()` | Leadership staff |
 | `getAllStaff()` | Full staff directory |
@@ -174,11 +180,20 @@ Clears all data before re-seeding. Includes: 27 staff, 6 small groups, 6 support
 - **Gatherings page:** Shows 4 latest messages + "View All Messages" link
 - YouTube URL parsing handles youtu.be, youtube.com/watch, and youtube.com/embed formats
 
-### Alpha Registration
+### Alpha Registration & Interest
 - **Church Center integration:** iframe embed with `?embed=true` at `/explore-faith/alpha`
-- **Registration window:** Shows active session up to 4 weeks after start date
-- **Seasonal fallback:** When no active session, shows "Alpha Returns In The Spring/In The Fall"
-- **Season logic:** Feb–Jun → "In The Fall", Jul–Jan → "In The Spring"
+- **Registration window:** 6 weeks before startDate through 3 weeks after startDate
+- **Three page states:**
+  1. **In registration window:** Session details card + iframe registration form
+  2. **Outside window, future session in DB:** "Alpha Returns [Month Year]" + interest form
+  3. **No future session:** "Alpha Returns In The Spring/In The Fall" + interest form
+- **Season heuristic (fallback):** Feb–Jun → "In The Fall", Jul–Jan → "In The Spring"
+- **Interest form:** Collects name + email, stored in `AlphaInterest` model, linked to session if known
+- **Interest notification:** POST `/api/alpha/notify-interest` (requires `CRON_SECRET` Bearer token)
+  - Sends "registration is open" email to all un-notified interests for a session
+  - Trigger manually when opening registration: `curl -X POST .../api/alpha/notify-interest -H "Authorization: Bearer $CRON_SECRET" -d '{"sessionId":"..."}'`
+- **Server action:** `app/actions/alpha-interest.ts` — rate limited, honeypot, sends Resend acknowledgment
+- **Component:** `components/alpha/alpha-interest-form.tsx` (client component)
 - **Messaging:** "Explore Life's Big Questions" — welcoming to seekers, not conversion-focused
 
 ### Hub Pages
@@ -189,7 +204,7 @@ Clears all data before re-seeding. Includes: 27 staff, 6 small groups, 6 support
 ## KEY USER JOURNEYS
 
 ### 1. Spiritual Seeker → Alpha (TOP PRIORITY)
-**Flow**: Homepage → Alpha section → Alpha page → Registration
+**Flow**: Homepage → Alpha section → Alpha page → Registration (or Interest Form if outside window)
 **Messaging**: "Explore Life's Big Questions" (not conversion-focused)
 **Tone**: Welcoming, non-assumptive, inviting to skeptics
 

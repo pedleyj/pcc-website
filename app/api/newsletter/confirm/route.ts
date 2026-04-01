@@ -10,14 +10,13 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  try {
-    await confirmNewsletterSubscriber(token)
-    return NextResponse.redirect(
-      new URL('/about/newsletter/confirm?status=success', request.url)
-    )
-  } catch {
+  const result = await confirmNewsletterSubscriber(token)
+  if (!result) {
     return NextResponse.redirect(
       new URL('/about/newsletter/confirm?status=invalid', request.url)
     )
   }
+  return NextResponse.redirect(
+    new URL('/about/newsletter/confirm?status=success', request.url)
+  )
 }

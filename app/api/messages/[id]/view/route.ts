@@ -7,10 +7,9 @@ export async function POST(
 ) {
   const { id } = await params
 
-  try {
-    const result = await incrementViewCount(id)
-    return NextResponse.json({ viewCount: result.viewCount })
-  } catch {
+  const result = await incrementViewCount(id)
+  if (!result) {
     return NextResponse.json({ viewCount: 0 }, { status: 404 })
   }
+  return NextResponse.json({ viewCount: result.viewCount })
 }

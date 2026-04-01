@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useId } from 'react'
 import Link from 'next/link'
 import { ChevronDownIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils/cn'
@@ -33,7 +33,7 @@ export function NavDropdown({ label, href, items, mobile = false, onNavigate, is
   const menuRef = useRef<HTMLDivElement>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const menuId = `dropdown-${label.toLowerCase().replace(/\s+/g, '-')}`
+  const menuId = useId()
 
   // Focus first menu item when desktop dropdown opens via keyboard
   const focusFirstItem = useCallback(() => {

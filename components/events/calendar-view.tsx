@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, getDay, addMonths, subMonths } from 'date-fns'
+import { format, startOfMonth, endOfMonth, startOfDay, eachDayOfInterval, isSameMonth, isSameDay, getDay, addMonths, subMonths } from 'date-fns'
 import {
   CalendarDaysIcon,
   ListBulletIcon,
@@ -178,9 +178,9 @@ function MonthView({ events, currentMonth, onPrev, onNext }: {
 
           {days.map((day) => {
             const dayEvents = events.filter((e) => {
-              const start = new Date(e.startDate)
-              const end = e.endDate ? new Date(e.endDate) : start
-              return day >= new Date(start.toDateString()) && day <= new Date(end.toDateString())
+              const start = startOfDay(new Date(e.startDate))
+              const end = e.endDate ? startOfDay(new Date(e.endDate)) : start
+              return day >= start && day <= end
             })
             const isToday = isSameDay(day, new Date())
             const dayLabel = `${format(day, 'EEEE, MMMM d')}${dayEvents.length > 0 ? `, ${dayEvents.length} event${dayEvents.length > 1 ? 's' : ''}` : ''}`
@@ -427,27 +427,27 @@ export function CalendarView({
             </button>
 
             {/* View toggle */}
-            <div className="flex rounded-lg border border-pcc-cream-dark overflow-hidden">
+            <div className="flex rounded-lg border border-pcc-cream-dark overflow-hidden" role="tablist" aria-label="View format">
               <button
                 type="button"
+                role="tab"
+                aria-selected={view === 'list'}
                 onClick={() => setView('list')}
                 className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${
                   view === 'list' ? 'bg-pcc-navy text-white' : 'bg-white text-pcc-slate hover:bg-pcc-cream'
                 }`}
-                aria-label="List view"
-                aria-current={view === 'list' ? 'true' : undefined}
               >
                 <ListBulletIcon className="h-4 w-4" aria-hidden="true" />
                 List
               </button>
               <button
                 type="button"
+                role="tab"
+                aria-selected={view === 'month'}
                 onClick={() => setView('month')}
                 className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${
                   view === 'month' ? 'bg-pcc-navy text-white' : 'bg-white text-pcc-slate hover:bg-pcc-cream'
                 }`}
-                aria-label="Month view"
-                aria-current={view === 'month' ? 'true' : undefined}
               >
                 <CalendarDaysIcon className="h-4 w-4" aria-hidden="true" />
                 Month
@@ -466,6 +466,7 @@ export function CalendarView({
                 <button
                   key={cat}
                   type="button"
+                  aria-pressed={isActive}
                   onClick={() => toggleCategory(cat)}
                   className={`rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors ${
                     isActive ? 'bg-pcc-navy text-white' : `${style.bg} ${style.text} hover:opacity-80`

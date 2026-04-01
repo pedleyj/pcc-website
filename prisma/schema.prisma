@@ -8,23 +8,39 @@ datasource db {
 }
 
 model AlphaSession {
-  id                String   @id @default(cuid())
+  id                String          @id @default(cuid())
   season            String
   startDate         DateTime
   endDate           DateTime
   meetingDay        String
   meetingTime       String
   location          String
-  description       String   @db.Text
-  registrationOpen  Boolean  @default(true)
+  description       String          @db.Text
+  registrationOpen  Boolean         @default(true)
   registrationUrl   String
   maxCapacity       Int?
-  currentCount      Int      @default(0)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  currentCount      Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  interests         AlphaInterest[]
 
   @@index([startDate])
   @@index([registrationOpen])
+}
+
+model AlphaInterest {
+  id         String        @id @default(cuid())
+  email      String
+  firstName  String?
+  sessionId  String?
+  session    AlphaSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  notifiedAt DateTime?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@unique([email, sessionId])
+  @@index([sessionId])
+  @@index([notifiedAt])
 }
 
 model Message {

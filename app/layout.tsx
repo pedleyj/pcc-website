@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Inter } from "next/font/google";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -28,11 +29,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Reading x-nonce forces this layout to be dynamic (one nonce per request).
+  // Next.js reads the nonce from the CSP response header automatically.
+  const _nonce = (await headers()).get('x-nonce')
+
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
