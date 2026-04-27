@@ -1,8 +1,8 @@
 # CLAUDE.md - PCC Website Project Guide
 
-**Last Updated**: March 16, 2026
+**Last Updated**: April 27, 2026
 **Project**: Peninsula Covenant Church Website Redesign
-**Status**: Sprint 1 Complete, Sprint 1.5 (Bug Fixes) ~60% done
+**Status**: Sprint 1 + 1.5 Complete; Sprint 2 substantially shipped (events, prayer, newsletter, message sync, small groups). Remaining: shared Button component, logo wordmark sizing, MessageResource UI surface.
 
 ---
 
@@ -40,32 +40,41 @@ pcc-website/
 │   │   ├── alpha/                # Alpha program page (KEY PAGE)
 │   │   └── faq/                  # Faith questions FAQ
 │   ├── connect/                  # Hub page (card grid)
-│   │   ├── groups/               # Small groups
-│   │   ├── serve/                # Serve opportunities
-│   │   └── ministries/           # Ministry directory
+│   │   ├── groups/               # Small groups (links to Church Center)
+│   │   └── serve/                # Serve opportunities (absorbed Ministries)
 │   ├── support/                  # Hub page (card grid)
-│   │   ├── prayer/               # Prayer requests
+│   │   ├── prayer/               # Prayer request form (Resend email + DB)
 │   │   ├── stephen-ministry/
 │   │   ├── community-care/
 │   │   ├── counseling/
 │   │   ├── marriage/
 │   │   └── groups/               # Support groups
 │   ├── about/                    # Hub page with anchor IDs
-│   │   ├── beliefs/
-│   │   ├── leadership/
+│   │   ├── beliefs/              # Six Covenant Affirmations
+│   │   ├── leadership/           # LST: Officers, Team, Nominating
 │   │   ├── staff/                # Staff directory
-│   │   ├── community/
-│   │   └── newsletter/
-│   ├── messages/                 # Message archive with filters
-│   │   └── [id]/                 # Individual message detail
-│   ├── events/                   # Events calendar
+│   │   ├── community/            # Hub for community programs
+│   │   │   ├── preschool/        # PCC Preschool landing
+│   │   │   ├── community-center/ # PCC Community Center landing
+│   │   │   └── sacc/             # SACC landing
+│   │   └── newsletter/           # Newsletter signup + confirm pages
+│   ├── messages/                 # Paginated archive (12/page) with filters
+│   │   └── [id]/                 # Detail: media toggle, share, related
+│   ├── events/                   # Calendar with category filters + month/list
+│   ├── actions/                  # Server actions (alpha-interest, prayer, newsletter)
+│   ├── api/                      # Route handlers (see API ROUTES section)
 │   └── give/                     # Giving page
 ├── components/
-│   ├── alpha/                    # alpha-interest-form.tsx (client component)
-│   ├── layout/                   # header.tsx, footer.tsx, logo.tsx, nav-dropdown.tsx
+│   ├── alpha/                    # alpha-interest-form.tsx
+│   ├── events/                   # calendar-view.tsx (filtering + view toggle)
+│   ├── groups/                   # groups-browser.tsx
 │   ├── home/                     # hero-carousel.tsx
-│   ├── messages/                 # filter-select.tsx (client component)
-│   └── ministries/               # ministry-grid.tsx
+│   ├── icons/                    # social-icons.tsx
+│   ├── layout/                   # header, footer, footer-newsletter, logo,
+│   │                             # nav-dropdown, breadcrumb, scroll-to-top
+│   ├── messages/                 # filter-select, share-buttons,
+│   │                             # media-player, view-counter
+│   └── support/                  # prayer-form.tsx
 ├── lib/
 │   ├── db/                       # Prisma singleton (prisma.ts) + query functions (queries.ts)
 │   └── utils/                    # cn() helper (clsx + tailwind-merge)
@@ -105,19 +114,21 @@ pcc-website/
 ## DATABASE SCHEMA
 
 ### Models (Prisma v6)
-10 models total:
+12 models total:
 
 | Model | Key Fields |
 |-------|-----------|
 | **AlphaSession** | startDate, endDate, location, registrationUrl |
 | **AlphaInterest** | email, firstName, sessionId (FK→AlphaSession), notifiedAt |
-| **Message** | title, speaker, series, videoUrl, audioUrl, resourceUrl, scripture |
-| **Event** | startTime, endTime, recurring, recurrenceRule, location |
+| **Message** | title, speaker, series, videoUrl, audioUrl, resourceUrl, scripture, viewCount |
+| **MessageResource** | messageId (FK), type (beyond_sunday / discussion_guide / sermon_notes), fileUrl |
+| **Event** | startTime, endTime, recurring, recurrenceRule, location, category, featured, registrationUrl |
 | **Ministry** | name, description, category, contactEmail |
 | **StaffMember** | name, title, department, bio, imageUrl |
-| **SmallGroup** | name, type (growth/life), leader, meetingDay |
-| **PrayerRequest** | name, email, request, isConfidential |
+| **SmallGroup** | name, type (growth/life), leader, meetingDay, ageGroup, capacity, openForSignup |
+| **PrayerRequest** | name, email, phone, request, isPublic, isConfidential |
 | **SupportResource** | title, category, description, contactInfo |
+| **NewsletterSubscriber** | email, status (pending/confirmed/unsubscribed), confirmToken, unsubscribeToken |
 | **SiteSettings** | key/value pairs for site-wide config |
 
 ### Query Functions (`lib/db/queries.ts`)
@@ -167,7 +178,8 @@ Clears all data before re-seeding. Includes: 27 staff, 6 small groups, 6 support
 
 ### Route Redirects (in `next.config.ts`)
 - `/alpha` → `/explore-faith/alpha` (permanent 301)
-- `/ministries` → `/connect/ministries` (permanent 301)
+- `/ministries` → `/connect/serve` (permanent 301)
+- `/connect/ministries` → `/connect/serve` (permanent 301 — Ministries page was deleted, content consolidated into Serve)
 
 ---
 
@@ -196,8 +208,57 @@ Clears all data before re-seeding. Includes: 27 staff, 6 small groups, 6 support
 - **Component:** `components/alpha/alpha-interest-form.tsx` (client component)
 - **Messaging:** "Explore Life's Big Questions" — welcoming to seekers, not conversion-focused
 
+### Events Calendar
+- **Page**: `/events` — month view + list view toggle, category filters (worship, alpha, ministry, youth, kids, outreach, community), search
+- **Component**: `components/events/calendar-view.tsx` (client, uses `date-fns`)
+- **Sync**: `/api/sync-events` — Vercel cron daily at 06:00 UTC pulls from Planning Center; auth via `SYNC_SECRET` (also accepts Vercel cron header)
+- **Detail pages**: include "View on Church Center" CTA when `registrationUrl` present
+- Image hosts allowed for Planning Center CDN (next.config.ts + CSP)
+
+### Prayer Request System
+- **Page**: `/support/prayer` with `components/support/prayer-form.tsx`
+- **Server action**: `app/actions/prayer.ts` — honeypot, rate-limited (5/IP/hr), 5000-char limit
+- **Visibility toggle**: Private (prayer team only) vs Public on prayer wall
+- **Email**: Resend sends `[PCC PRAYER REQUEST]` to pedleyj@gmail.com on submit
+- **Storage**: `PrayerRequest` model with `isPublic` + `isConfidential` flags
+
+### Newsletter (Double Opt-In)
+- **Footer signup**: `components/layout/footer-newsletter.tsx` (minimal email + button)
+- **Server action**: `app/actions/newsletter.ts` — honeypot (`company` field), rate-limited (2/IP/hr, 1/email/24hr)
+- **Flow**: Signup → Resend confirmation email → user clicks token link → `/api/newsletter/confirm` → status=confirmed
+- **Unsubscribe**: token-based at `/api/newsletter/unsubscribe`
+- **Admin**: `/api/newsletter/preview` (sample HTML), `/api/newsletter/send-test` (auth via `SYNC_SECRET`)
+- **Confirm pages**: `/about/newsletter/confirm` for success/error UI
+
+### Message Sync (Planning Center + YouTube + Beyond Sunday)
+- **Endpoint**: `/api/sync-messages` (manual trigger, auth via `SYNC_SECRET`)
+- **Sources**: Planning Center Services API (sermon metadata) + YouTube Data API (video matching by `MM.DD.YYYY` title format) + Beyond Sunday PDF URLs
+- **Stores**: Messages with `videoUrl`, `audioUrl`, `resourceUrl`, plus `MessageResource` rows for Beyond Sunday PDFs / discussion guides
+- **Note**: `MessageResource` data syncs to DB but is **not yet surfaced on the message detail UI** — see Remaining Work
+- **View counter**: `/api/messages/[id]/view` increments `Message.viewCount`
+
 ### Hub Pages
-`/explore-faith`, `/connect`, `/support` — card grids linking to sub-pages. About page has "Learn More" hub card section with anchor IDs.
+`/explore-faith`, `/connect`, `/support` — card grids linking to sub-pages. About page has "Learn More" hub card section with anchor IDs. `/about/community` is itself a hub linking to Preschool, Community Center, and SACC landing pages.
+
+### Breadcrumbs
+All level-2+ pages use `components/layout/breadcrumb.tsx` for consistent navigation context.
+
+---
+
+## API ROUTES
+
+| Route | Purpose | Auth |
+|-------|---------|------|
+| `POST /api/sync-events` | Pull events from Planning Center | `SYNC_SECRET` Bearer or Vercel cron header |
+| `POST /api/sync-messages` | Pull sermons + Beyond Sunday + YouTube videos | `SYNC_SECRET` Bearer |
+| `POST /api/messages/[id]/view` | Increment message view counter | None |
+| `POST /api/alpha/notify-interest` | Email all un-notified Alpha interests | `CRON_SECRET` Bearer |
+| `GET  /api/newsletter/confirm?token=` | Confirm subscription | Token in URL |
+| `GET  /api/newsletter/unsubscribe?token=` | Unsubscribe | Token in URL |
+| `GET  /api/newsletter/preview` | Preview rendered newsletter HTML | None (read-only) |
+| `POST /api/newsletter/send-test` | Send test or broadcast newsletter | `SYNC_SECRET` Bearer |
+
+**Vercel Cron** (`vercel.json`): only `/api/sync-events` runs on schedule (`0 6 * * *` daily). Hobby plan limits us to one cron — message sync is manually triggered.
 
 ---
 
@@ -270,23 +331,33 @@ npx vercel --token <TOKEN> --prod --yes                 # Deploy to Vercel
 
 ## KNOWN ISSUES & REMAINING WORK
 
-### Sprint 1.5 — Remaining (~9 items)
-- [ ] Content updates (Community Programs, What We Believe, Serve, Prayer)
-- [ ] Leadership page restructure (new bylaws)
-- [ ] Logo wordmark fix (weight too heavy, size too small)
-- [ ] Footer improvements (mailto: link, social icons, SEO)
-- [ ] Button consistency review
-- [ ] Accessibility fixes (contrast, touch targets)
-- [ ] Security headers (CSP, COOP, X-Frame-Options)
-- [ ] Caching fixes (back/forward cache)
-- [ ] Form testing (contact, newsletter, prayer request)
+### Sprint 1.5 — Complete ✓
+All items shipped in commits leading up to f72790e ("Fix bugs, security issues, accessibility, and add Alpha interest system"):
+- [x] Content updates (Community, Beliefs, Serve, Prayer)
+- [x] Leadership page restructure (LST: Officers, Team Members, Nominating)
+- [x] Footer improvements (mailto, social icons, newsletter signup)
+- [x] Accessibility fixes (44 aria-labels across 11 files; `min-h-[44px]` touch targets; focus-visible rings)
+- [x] Security headers (`next.config.ts:4-35` + nonce-based CSP in middleware; X-Frame-Options DENY, COOP same-origin)
+- [x] Caching (Cache-Control on static assets; no `unload` listeners — bfcache friendly; per-page `revalidate`)
+- [x] Form testing (validation, aria-invalid, honeypots, rate limiting on all server actions)
 
-### Sprint 2 — Queued
-- Full events calendar with filtering
-- Support section with prayer requests
-- Small groups browsing
-- Sunday resources (Beyond Sunday PDFs)
-- Newsletter integration
+### Sprint 2 — Substantially Complete ✓
+- [x] Events calendar with filtering (`/events` + Planning Center daily sync)
+- [x] Support section with prayer requests (form + Resend email + DB)
+- [x] Small groups browsing (`/connect/groups` — links to Church Center filtered directories; no in-app group detail pages, by design)
+- [x] Newsletter integration (double opt-in, token-based confirm/unsub, branded email)
+- [~] Beyond Sunday PDFs — **PARTIAL**: sync writes `MessageResource` rows but message detail UI does not yet display them
+
+### Remaining Work
+- [ ] **Logo wordmark sizing** — font is `font-light`, but visual size against new layout still needs review (`components/layout/logo.tsx`)
+- [ ] **Shared `<Button>` component** — buttons are still inline-styled across pages; consolidate into `components/ui/button.tsx` for consistency
+- [ ] **Surface MessageResource on detail pages** — render Beyond Sunday / discussion guide / sermon notes downloads on `/messages/[id]`
+- [ ] **Pre-launch**: remove robots.txt + noindex meta tags when moving to production domain (currently blocking SEO since this is staging)
+
+### Sprint 3 — Ideas / Backlog
+- Public prayer wall surface (model already supports `isPublic`)
+- Individual small group detail pages (model has `capacity`, `openForSignup` — currently delegated to Church Center)
+- Newsletter content management UI (currently send-test endpoint only)
 
 ---
 
